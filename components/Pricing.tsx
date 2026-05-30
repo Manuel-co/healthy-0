@@ -1,0 +1,127 @@
+"use client";
+
+const plans = [
+  {
+    name: "Starter",
+    price: "$3.99",
+    period: "/mo",
+    desc: "Perfect for getting started on your wellness journey.",
+    features: [
+      "1 session per month",
+      "Text support between sessions",
+      "Access to wellness resources",
+      "Progress tracking",
+    ],
+    cta: "Get started",
+    highlight: false,
+    bg: "#f0ede6",
+  },
+  {
+    name: "Growth",
+    price: "$24.99",
+    period: "/mo",
+    desc: "Our most popular plan for consistent progress.",
+    features: [
+      "4 sessions per month",
+      "Priority therapist matching",
+      "Unlimited text support",
+      "Progress tracking",
+      "Group workshops",
+    ],
+    cta: "Start free trial",
+    highlight: true,
+    bg: "#1a1a1a",
+  },
+  {
+    name: "Premium",
+    price: "$59.99",
+    period: "/mo",
+    desc: "Comprehensive care for those who want the most.",
+    features: [
+      "Unlimited sessions",
+      "Dedicated therapist",
+      "24/7 crisis support",
+      "Family sessions included",
+      "Personalised wellness plan",
+    ],
+    cta: "Get started",
+    highlight: false,
+    bg: "#f0ede6",
+  },
+];
+
+export default function Pricing() {
+  return (
+    <div className="bg-[#e8e4dc] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
+      <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#e8e4dc] px-6 py-12 md:px-10 md:py-16">
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <p className="text-[11px] tracking-[0.15em] uppercase text-[#1a1a1a]/40 mb-3">Pricing</p>
+          <h2 className="text-[36px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[#1a1a1a]">
+            Simple, transparent
+            <br />
+            <em className="not-italic italic">pricing</em>
+          </h2>
+        </div>
+
+        {/* Plans */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {plans.map((p, i) => (
+            <div
+              key={i}
+              className="rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
+              style={{ background: p.bg }}
+            >
+              {p.highlight && (
+                <div className="absolute top-4 right-4 text-[10px] font-medium bg-[#c9b99a] text-[#1a1a1a] px-2.5 py-1 rounded-full">
+                  Most popular
+                </div>
+              )}
+
+              <div>
+                <p className={`text-[11px] tracking-widest uppercase mb-4 ${p.highlight ? "text-white/40" : "text-[#1a1a1a]/40"}`}>
+                  {p.name}
+                </p>
+                <div className="flex items-end gap-1 mb-2">
+                  <span className={`text-[44px] leading-none font-light tracking-tight ${p.highlight ? "text-white" : "text-[#1a1a1a]"}`}>
+                    {p.price}
+                  </span>
+                  <span className={`text-[13px] mb-1.5 ${p.highlight ? "text-white/40" : "text-[#1a1a1a]/40"}`}>
+                    {p.period}
+                  </span>
+                </div>
+                <p className={`text-[12px] leading-[1.6] mb-6 ${p.highlight ? "text-white/50" : "text-[#1a1a1a]/50"}`}>
+                  {p.desc}
+                </p>
+
+                <ul className="space-y-2.5 mb-8">
+                  {p.features.map((f, j) => (
+                    <li key={j} className="flex items-center gap-2.5">
+                      <span className={`w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 ${p.highlight ? "bg-white/15" : "bg-black/8"}`}>
+                        <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                          <path d="M2 5l2.5 2.5L8 3" stroke={p.highlight ? "white" : "#1a1a1a"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                      <span className={`text-[12px] ${p.highlight ? "text-white/70" : "text-[#1a1a1a]/65"}`}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <button
+                className={`w-full py-3 rounded-full text-[13px] font-medium transition-colors cursor-pointer ${
+                  p.highlight
+                    ? "bg-[#c9b99a] text-[#1a1a1a] hover:bg-[#d4c4a8]"
+                    : "bg-[#1a1a1a] text-[#f0ede6] hover:bg-[#333]"
+                }`}
+              >
+                {p.cta}
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
