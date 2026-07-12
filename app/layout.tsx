@@ -15,8 +15,8 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Healthy-Zero",
-  description: "Where every act of kindness brings guidance by a councillor. Compassionate therapists here to guide you on your journey toward healing.",
+  title: "HealthyZero",
+  description: "HealthyZero makes access to healthcare easy and affordable — connecting you with licensed doctors from the comfort of home. Zero boundaries, zero limitations, zero stigmatization.",
 };
 
 export default function RootLayout({

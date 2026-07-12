@@ -43,10 +43,10 @@ export default function Therapists() {
   });
 
   return (
-    <div className="bg-[#e8e4dc] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
+    <div id="doctors" className="bg-[#fffef8] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
       <div
         ref={ref}
-        className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#1a1a1a] px-6 py-12 md:px-10 md:py-16"
+        className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#071938] px-6 py-12 md:px-10 md:py-16"
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
@@ -60,14 +60,14 @@ export default function Therapists() {
             >
               Meet your
               <br />
-              <em className="not-italic italic text-[#c9b99a]">councillors</em>
+              <em className="not-italic italic text-[#e7f1a8]">doctors</em>
             </h2>
           </div>
           <button
             className="self-start sm:self-auto flex items-center gap-2.5 text-[13px] text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer group"
             style={fadeUp(200)}
           >
-            All therapists
+            All doctors
             <span className="w-8 h-8 border border-white/20 rounded-full flex items-center justify-center text-sm group-hover:translate-x-1 transition-transform">
               →
             </span>
@@ -91,7 +91,7 @@ export default function Therapists() {
                 />
                 <div
                   className={`absolute top-3 right-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium ${
-                    t.available ? "bg-[#c8d9b8] text-[#1a1a1a]" : "bg-white/20 text-white"
+                    t.available ? "bg-[#cfe0f7] text-[#071938]" : "bg-white/20 text-white"
                   }`}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${t.available ? "bg-green-600" : "bg-white/50"}`} />

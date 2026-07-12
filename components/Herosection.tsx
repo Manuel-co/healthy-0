@@ -59,15 +59,13 @@ export default function HeroSection() {
           }}
         >
           {/* Logo — sits on the left (beige) half */}
-          <div className="flex items-center gap-2.5 text-[14px] sm:text-[15px] font-medium tracking-tight text-[#1a1a1a] group cursor-pointer">
-            <div className="w-[26px] h-[26px] bg-[#1a1a1a] rounded-[6px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              <svg viewBox="0 0 14 14" className="w-[14px] h-[14px] fill-[#f0ede6]">
-                <polygon points="7,1 13,5 13,11 7,13 1,11 1,5" />
-              </svg>
+          <div className="flex items-center gap-2.5 text-[14px] sm:text-[15px] font-medium tracking-tight text-[#071938] group cursor-pointer">
+            <div className="w-[34px] h-[34px] bg-[#071938] rounded-[8px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <img src="/logo.png" alt="" className="w-[24px] h-[24px] object-contain" />
             </div>
             <span className="relative">
-              Healthy-Zero
-              <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-[#1a1a1a] transition-all duration-300 group-hover:w-full" />
+              HealthyZero
+              <span className="absolute -bottom-0.5 left-0 w-0 h-[1.5px] bg-[#071938] transition-all duration-300 group-hover:w-full" />
             </span>
           </div>
 
@@ -84,7 +82,7 @@ export default function HeroSection() {
                   key={social.label}
                   href="#" 
                   aria-label={social.label}
-                  className="w-8 h-8 border border-black/20 rounded-full flex items-center justify-center text-[#1a1a1a] bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:border-black/40 hover:scale-110 hover:shadow-lg transition-all duration-300"
+                  className="w-8 h-8 border border-black/20 rounded-full flex items-center justify-center text-[#071938] bg-white/70 backdrop-blur-sm hover:bg-white/90 hover:border-black/40 hover:scale-110 hover:shadow-lg transition-all duration-300"
                   style={{
                     opacity: isLoaded ? 1 : 0,
                     transform: isLoaded ? "translateY(0)" : "translateY(-10px)",
@@ -122,8 +120,8 @@ export default function HeroSection() {
                   href="#" 
                   className={`relative text-[13px] px-3 py-1.5 rounded-full transition-all duration-300 overflow-hidden group ${
                     i === 0 
-                      ? "font-medium text-[#1a1a1a] bg-white/80" 
-                      : "text-[#1a1a1a]/55 hover:text-[#1a1a1a]"
+                      ? "font-medium text-[#071938] bg-white/80" 
+                      : "text-[#071938]/55 hover:text-[#071938]"
                   }`}
                 >
                   <span className="relative z-10">{item}</span>
@@ -134,15 +132,15 @@ export default function HeroSection() {
               ))}
             </nav>
 
-            {/* Hamburger with enhanced animation */}
+            {/* Hamburger with enhanced animation — mobile only, nav links cover desktop */}
             <button
               aria-label="Toggle menu"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="w-9 h-9 border border-black/20 rounded-lg flex flex-col items-center justify-center gap-[5px] bg-white/70 backdrop-blur-sm cursor-pointer hover:bg-white/90 hover:border-black/40 hover:scale-105 transition-all duration-300"
+              className="md:hidden w-9 h-9 border border-black/20 rounded-lg flex flex-col items-center justify-center gap-[5px] bg-white/70 backdrop-blur-sm cursor-pointer hover:bg-white/90 hover:border-black/40 hover:scale-105 transition-all duration-300"
             >
-              <span className={`block h-[1.5px] bg-[#1a1a1a] rounded-sm transition-all duration-300 ${menuOpen ? "w-4 rotate-45 translate-y-[6.5px]" : "w-4"}`} />
-              <span className={`block w-4 h-[1.5px] bg-[#1a1a1a] rounded-sm transition-all duration-300 ${menuOpen ? "opacity-0 scale-0" : "opacity-100"}`} />
-              <span className={`block h-[1.5px] bg-[#1a1a1a] rounded-sm transition-all duration-300 ${menuOpen ? "w-4 -rotate-45 -translate-y-[6.5px] mr-0" : "w-[11px] self-end mr-[10px]"}`} />
+              <span className={`block h-[1.5px] bg-[#071938] rounded-sm transition-all duration-300 ${menuOpen ? "w-4 rotate-45 translate-y-[6.5px]" : "w-4"}`} />
+              <span className={`block w-4 h-[1.5px] bg-[#071938] rounded-sm transition-all duration-300 ${menuOpen ? "opacity-0 scale-0" : "opacity-100"}`} />
+              <span className={`block h-[1.5px] bg-[#071938] rounded-sm transition-all duration-300 ${menuOpen ? "w-4 -rotate-45 -translate-y-[6.5px] mr-0" : "w-[11px] self-end mr-[10px]"}`} />
             </button>
           </div>
         </header>
@@ -158,7 +156,7 @@ export default function HeroSection() {
               key={item}
               href="#" 
               className={`text-[15px] py-2 transition-all duration-300 ${
-                i === 0 ? "font-medium text-[#1a1a1a]" : "text-[#1a1a1a]/60"
+                i === 0 ? "font-medium text-[#071938]" : "text-[#071938]/60"
               }`}
               style={{
                 transform: menuOpen ? "translateX(0)" : "translateX(-20px)",
@@ -179,7 +177,7 @@ export default function HeroSection() {
           {/* Headline block */}
           <div>
             <h1
-              className="text-[24px] sm:text-[36px] lg:text-[46px] leading-[1.15] tracking-[-0.02em] text-[#1a1a1a] mb-5"
+              className="text-[24px] sm:text-[36px] lg:text-[46px] leading-[1.15] tracking-[-0.02em] text-[#071938] mb-5"
             >
               <span 
                 className="block overflow-hidden"
@@ -190,9 +188,9 @@ export default function HeroSection() {
                   transitionDelay: "400ms",
                 }}
               >
-                Where every act of kindness
+                Quality healthcare,
               </span>
-              <span 
+              <span
                 className="block overflow-hidden"
                 style={{
                   opacity: isLoaded ? 1 : 0,
@@ -201,17 +199,17 @@ export default function HeroSection() {
                   transitionDelay: "550ms",
                 }}
               >
-                brings guid by{" "}
+                without barriers, by a{" "}
                 <span className="inline-flex items-center gap-1.5 sm:gap-2 align-middle">
-                  <span className="inline-flex w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-[#d8d0c4] bg-[#c9b99a] items-center justify-center flex-shrink-0">
+                  <span className="inline-flex w-7 h-7 sm:w-9 sm:h-9 rounded-full overflow-hidden border-2 border-[#c7d6ef] bg-[#0040b2] items-center justify-center flex-shrink-0">
                     <img 
                       src="https://i.pravatar.cc/40?img=47" 
-                      alt="councillor" 
-                      className="w-full h-full object-cover" 
+                      alt="doctor"
+                      className="w-full h-full object-cover"
                     />
                   </span>
                   <em className="relative not-italic italic inline-block pb-1.5 sm:pb-2">
-                    councillor
+                    doctor
                     <img
                       src="/lin.png"
                       alt=""
@@ -224,7 +222,7 @@ export default function HeroSection() {
             </h1>
 
             <p 
-              className="text-[12.5px] sm:text-[13px] leading-[1.7] text-[#1a1a1a]/55 max-w-[340px] mb-8 font-light"
+              className="text-[12.5px] sm:text-[13px] leading-[1.7] text-[#071938]/55 max-w-[340px] mb-8 font-light"
               style={{
                 opacity: isLoaded ? 1 : 0,
                 transform: isLoaded ? "translateY(0)" : "translateY(20px)",
@@ -232,9 +230,9 @@ export default function HeroSection() {
                 transitionDelay: "700ms",
               }}
             >
-              At Healthy-Zero, we believe that every small act of kindness can create ripples of
-              change, bringing harmony to the world. Our compassionate therapists are here to guide
-              you on your journey toward healing.
+              At HealthyZero, we believe healthcare shouldn&apos;t depend on where you live, what
+              you&apos;re facing, or who might be watching. Private, judgment-free care from a
+              licensed doctor — wherever you are.
             </p>
 
             <div 
@@ -246,20 +244,20 @@ export default function HeroSection() {
                 transitionDelay: "850ms",
               }}
             >
-              <button className="relative bg-[#1a1a1a] text-[#f0ede6] px-5 py-2.5 rounded-full text-[12.5px] sm:text-[13px] font-normal tracking-[0.01em] cursor-pointer overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-black/20 hover:scale-105 active:scale-95">
+              <button className="relative bg-[#071938] text-[#ffffff] px-5 py-2.5 rounded-full text-[12.5px] sm:text-[13px] font-normal tracking-[0.01em] cursor-pointer overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-black/20 hover:scale-105 active:scale-95">
                 <span className="relative z-10 flex items-center gap-2">
-                  Only $3.99/m
+                  Only ₦3.99/m
                   <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">→</span>
                 </span>
-                <span className="absolute inset-0 bg-gradient-to-r from-[#333] to-[#1a1a1a] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="absolute inset-0 bg-gradient-to-r from-[#0a2c5c] to-[#071938] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
               
-              <button className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-[#1a1a1a] bg-transparent border-none cursor-pointer group">
+              <button className="flex items-center gap-2.5 text-[12.5px] sm:text-[13px] text-[#071938] bg-transparent border-none cursor-pointer group">
                 <span className="relative">
-                  All therapists
-                  <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#1a1a1a] transition-all duration-300 group-hover:w-full" />
+                  All doctors
+                  <span className="absolute -bottom-0.5 left-0 w-0 h-[1px] bg-[#071938] transition-all duration-300 group-hover:w-full" />
                 </span>
-                <span className="w-7 h-7 border border-black/30 rounded-full flex items-center justify-center text-xs transition-all duration-300 group-hover:translate-x-1 group-hover:border-black/60 group-hover:bg-[#1a1a1a] group-hover:text-white">
+                <span className="w-7 h-7 border border-black/30 rounded-full flex items-center justify-center text-xs transition-all duration-300 group-hover:translate-x-1 group-hover:border-black/60 group-hover:bg-[#071938] group-hover:text-white">
                   →
                 </span>
               </button>
@@ -276,17 +274,17 @@ export default function HeroSection() {
               transitionDelay: "1000ms",
             }}
           >
-            <p className="text-[11px] text-[#1a1a1a]/40 mb-3 tracking-wide uppercase">Trusted by leading companies</p>
-            <div className="flex items-center gap-6 opacity-50">
-              {["Spotify", "Slack", "Notion", "Figma"].map((partner, i) => (
-                <span 
-                  key={partner}
-                  className="text-[13px] font-medium text-[#1a1a1a]/60 hover:text-[#1a1a1a] transition-colors duration-300 cursor-default"
+            <p className="text-[11px] text-[#071938]/40 mb-3 tracking-wide uppercase">Why people choose us</p>
+            <div className="flex items-center gap-6 opacity-70">
+              {["100% confidential", "No waiting rooms", "Doctors available 24/7"].map((point, i) => (
+                <span
+                  key={point}
+                  className="text-[12px] font-medium text-[#071938]/70 hover:text-[#071938] transition-colors duration-300 cursor-default"
                   style={{
                     animation: isLoaded ? `hh-fade-in 0.6s ease-out ${1100 + i * 100}ms both` : "none",
                   }}
                 >
-                  {partner}
+                  {point}
                 </span>
               ))}
             </div>
@@ -329,8 +327,8 @@ export default function HeroSection() {
             ))}
           </div>
           <div className="pl-1">
-            <p className="text-[11px] font-medium text-[#1a1a1a]">500+ therapists</p>
-            <p className="text-[10px] text-[#1a1a1a]/50">Available now</p>
+            <p className="text-[11px] font-medium text-[#071938]">500+ doctors</p>
+            <p className="text-[10px] text-[#071938]/50">Available now</p>
           </div>
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
         </div>

@@ -4,7 +4,7 @@ import { useInView } from "../lib/useInView";
 
 const testimonials = [
   {
-    quote: "Healthy-Zero changed my life. After just three months of sessions, I finally feel like myself again. The therapists are warm, professional, and genuinely care.",
+    quote: "HealthyZero changed my life. After just three months of sessions, I finally feel like myself again. The doctors are warm, professional, and genuinely care.",
     name: "Amelia R.",
     role: "Individual therapy client",
     avatar: "https://i.pravatar.cc/60?img=5",
@@ -29,7 +29,7 @@ const testimonials = [
 const stats = [
   { value: "12 000+", label: "Clients helped" },
   { value: "98%", label: "Satisfaction rate" },
-  { value: "50+", label: "Certified therapists" },
+  { value: "50+", label: "Certified doctors" },
   { value: "7 days", label: "A week, always available" },
 ];
 
@@ -44,21 +44,21 @@ export default function Testimonials() {
   });
 
   return (
-    <div className="bg-[#e8e4dc] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
-      <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#f0ede6] px-6 py-12 md:px-10 md:py-16">
+    <div className="bg-[#fffef8] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
+      <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#ffffff] px-6 py-12 md:px-10 md:py-16">
 
         {/* Header */}
         <div ref={ref} className="mb-10">
-          <p className="text-[11px] tracking-[0.15em] uppercase text-[#1a1a1a]/40 mb-3" style={fadeUp(0)}>
-            What clients say
+          <p className="text-[11px] tracking-[0.15em] uppercase text-[#071938]/40 mb-3" style={fadeUp(0)}>
+            What patients say
           </p>
           <h2
-            className="text-[36px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[#1a1a1a]"
+            className="text-[36px] sm:text-[44px] leading-[1.05] tracking-[-0.02em] text-[#071938]"
             style={fadeUp(100)}
           >
             Real stories,
             <br />
-            real <em className="not-italic italic">healing</em>
+            real <em className="not-italic italic">care</em>
           </h2>
         </div>
 
@@ -82,7 +82,7 @@ export default function Testimonials() {
                     width="13"
                     height="13"
                     viewBox="0 0 24 24"
-                    fill="#e8c96a"
+                    fill="#0040b2"
                     style={{
                       opacity: inView ? 1 : 0,
                       transform: inView ? "scale(1)" : "scale(0.5)",
@@ -93,14 +93,14 @@ export default function Testimonials() {
                   </svg>
                 ))}
               </div>
-              <p className="text-[12.5px] leading-[1.7] text-[#1a1a1a]/65 mb-6 flex-1">
+              <p className="text-[12.5px] leading-[1.7] text-[#071938]/65 mb-6 flex-1">
                 &ldquo;{t.quote}&rdquo;
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-black/8">
                 <img src={t.avatar} alt={t.name} className="w-9 h-9 rounded-full object-cover" />
                 <div>
-                  <p className="text-[12px] font-medium text-[#1a1a1a]">{t.name}</p>
-                  <p className="text-[11px] text-[#1a1a1a]/40">{t.role}</p>
+                  <p className="text-[12px] font-medium text-[#071938]">{t.name}</p>
+                  <p className="text-[11px] text-[#071938]/40">{t.role}</p>
                 </div>
               </div>
             </div>
@@ -119,10 +119,10 @@ export default function Testimonials() {
                 transition: `opacity 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 80}ms, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 80}ms`,
               }}
             >
-              <p className="text-[28px] sm:text-[32px] font-light text-[#1a1a1a] leading-none mb-1">
+              <p className="text-[28px] sm:text-[32px] font-light text-[#071938] leading-none mb-1">
                 {stat.value}
               </p>
-              <p className="text-[11px] text-[#1a1a1a]/40">{stat.label}</p>
+              <p className="text-[11px] text-[#071938]/40">{stat.label}</p>
             </div>
           ))}
         </div>

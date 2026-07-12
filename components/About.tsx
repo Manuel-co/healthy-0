@@ -32,11 +32,11 @@ export default function About() {
 
   return (
     /* Same outer background + padding as the hero */
-    <div ref={sectionRef} className="bg-[#e8e4dc] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
+    <div id="about" ref={sectionRef} className="bg-[#fffef8] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
 
       {/* Card — matches hero card radius */}
       <div 
-        className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#f0ede6] transition-all duration-1000 ease-out"
+        className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#ffffff] transition-all duration-1000 ease-out"
         style={{
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? "translateY(0)" : "translateY(40px)",
@@ -78,7 +78,7 @@ export default function About() {
               ].map((btn) => (
                 <button 
                   key={btn.text}
-                  className="group/btn flex items-center gap-2 bg-white/90 backdrop-blur-sm text-[#1a1a1a] text-[12px] md:text-[13px] font-medium px-3 py-2 md:px-4 md:py-2.5 rounded-full shadow-sm hover:bg-white hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-300"
+                  className="group/btn flex items-center gap-2 bg-white/90 backdrop-blur-sm text-[#071938] text-[12px] md:text-[13px] font-medium px-3 py-2 md:px-4 md:py-2.5 rounded-full shadow-sm hover:bg-white hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-300"
                   style={{
                     opacity: isVisible ? 1 : 0,
                     transform: isVisible ? "translateY(0)" : "translateY(20px)",
@@ -87,7 +87,7 @@ export default function About() {
                   }}
                 >
                   {btn.text}
-                  <span className="w-4 h-4 md:w-5 md:h-5 bg-[#1a1a1a] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover/btn:bg-[#333] group-hover/btn:translate-x-0.5">
+                  <span className="w-4 h-4 md:w-5 md:h-5 bg-[#071938] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover/btn:bg-[#0a2c5c] group-hover/btn:translate-x-0.5">
                     <svg width="7" height="7" viewBox="0 0 10 10" fill="white"><polygon points="3,2 8,5 3,8" /></svg>
                   </span>
                 </button>
@@ -96,7 +96,7 @@ export default function About() {
           </div>
 
           {/* ── RIGHT — content ── */}
-          <div className="flex flex-col gap-4 p-4 md:p-5 lg:p-6 bg-[#f0ede6]">
+          <div className="flex flex-col gap-4 p-4 md:p-5 lg:p-6 bg-[#ffffff]">
 
             {/* Top card — About title */}
             <div 
@@ -109,18 +109,18 @@ export default function About() {
               }}
             >
               {/* Subtle gradient orb on hover */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#f5e6a3]/30 rounded-full blur-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#e7f1a8]/30 rounded-full blur-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
 
               {/* Play button with pulse ring */}
-              <button className="absolute top-4 right-4 md:top-5 md:right-5 w-8 h-8 md:w-9 md:h-9 bg-[#1a1a1a] rounded-full flex items-center justify-center hover:bg-[#333] hover:scale-110 active:scale-95 transition-all duration-300 group/play">
-                <span className="absolute inset-0 rounded-full bg-[#1a1a1a]/20 animate-ping opacity-0 group-hover/play:opacity-100" />
+              <button className="absolute top-4 right-4 md:top-5 md:right-5 w-8 h-8 md:w-9 md:h-9 bg-[#071938] rounded-full flex items-center justify-center hover:bg-[#0a2c5c] hover:scale-110 active:scale-95 transition-all duration-300 group/play">
+                <span className="absolute inset-0 rounded-full bg-[#071938]/20 animate-ping opacity-0 group-hover/play:opacity-100" />
                 <svg width="9" height="11" viewBox="0 0 10 12" fill="white" className="relative z-10 ml-0.5">
                   <polygon points="1,1 9,6 1,11" />
                 </svg>
               </button>
 
               <h2
-                className="text-[40px] sm:text-[52px] lg:text-[60px] leading-[1.0] tracking-[-0.03em] text-[#1a1a1a] mb-3"
+                className="text-[40px] sm:text-[52px] lg:text-[60px] leading-[1.0] tracking-[-0.03em] text-[#071938] mb-3"
               >
                 <span 
                   className="block overflow-hidden"
@@ -142,7 +142,7 @@ export default function About() {
                     transitionDelay: "500ms",
                   }}
                 >
-                  Healthy-Zero
+                  HealthyZero
                 </span>
               </h2>
 
@@ -161,7 +161,7 @@ export default function About() {
               >
                 <path 
                   d="M2 8 Q20 2 38 8 Q56 14 74 8 Q92 2 110 8" 
-                  stroke="#e8c96a" 
+                  stroke="#0040b2" 
                   strokeWidth="2.5" 
                   strokeLinecap="round" 
                   fill="none"
@@ -174,8 +174,8 @@ export default function About() {
                 />
               </svg>
 
-              <p 
-                className="text-[12px] md:text-[12.5px] leading-[1.65] text-[#1a1a1a]/50 max-w-full md:max-w-[340px]"
+              <p
+                className="text-[12px] md:text-[12.5px] leading-[1.65] text-[#071938]/50 max-w-full md:max-w-[340px] mb-4"
                 style={{
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateY(0)" : "translateY(15px)",
@@ -183,10 +183,26 @@ export default function About() {
                   transitionDelay: "600ms",
                 }}
               >
-                Meditation is a tool for the mind to achieve different states of being. Out of
-                thousands of types of meditation, we offer a core of the most simple and effective
-                practices.
+                In a simple sentence: HealthyZero makes access to healthcare easy and affordable —
+                connecting you with licensed doctors from the comfort of home.
               </p>
+
+              <div
+                className="flex flex-wrap items-center gap-x-3 gap-y-1"
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? "translateY(0)" : "translateY(15px)",
+                  transition: "all 0.8s cubic-bezier(0.16, 1, 0.3, 1)",
+                  transitionDelay: "700ms",
+                }}
+              >
+                {["Zero boundaries", "Zero limitations", "Zero stigmatization"].map((item, i) => (
+                  <span key={item} className="flex items-center gap-3">
+                    <span className="text-[11px] md:text-[11.5px] font-medium text-[#0040b2]">{item}</span>
+                    {i < 2 && <span className="w-1 h-1 rounded-full bg-[#071938]/20" />}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* Bottom row — two cards */}
@@ -196,7 +212,7 @@ export default function About() {
               <div 
                 className="rounded-2xl p-4 md:p-5 relative overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-lg hover:-translate-y-1"
                 style={{ 
-                  background: "#f5e6a3",
+                  background: "#e7f1a8",
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateY(0)" : "translateY(30px)",
                   transition: "all 0.9s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, transform 0.3s ease",
@@ -207,32 +223,32 @@ export default function About() {
               >
                 {/* Floating decorative circles */}
                 <div 
-                  className="absolute top-3 right-3 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#c9b8d4]/50 transition-all duration-700"
+                  className="absolute top-3 right-3 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#c7d6ef]/50 transition-all duration-700"
                   style={{
                     transform: hoveredCard === 0 ? "translate(5px, -5px) scale(1.1)" : "translate(0, 0) scale(1)",
                   }}
                 />
                 <div 
-                  className="absolute top-7 right-7 w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#a89bc4]/40 transition-all duration-700 delay-75"
+                  className="absolute top-7 right-7 w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#9fb8e0]/40 transition-all duration-700 delay-75"
                   style={{
                     transform: hoveredCard === 0 ? "translate(8px, -3px) scale(1.15)" : "translate(0, 0) scale(1)",
                   }}
                 />
 
                 <h3
-                  className="text-[15px] md:text-[17px] leading-[1.25] font-semibold text-[#1a1a1a] mb-2 relative z-10"
+                  className="text-[15px] md:text-[17px] leading-[1.25] font-semibold text-[#071938] mb-2 relative z-10"
                 >
                   Stay healthy
                   <br />
-                  with Healthy-Zero
+                  with HealthyZero
                 </h3>
-                <p className="text-[11px] md:text-[11.5px] leading-[1.6] text-[#1a1a1a]/55 relative z-10">
-                  Meditation is a tool for the mind to achieve different states of being
+                <p className="text-[11px] md:text-[11.5px] leading-[1.6] text-[#071938]/55 relative z-10">
+                  Private consultations with licensed doctors — no stigma, no waiting rooms
                 </p>
 
                 {/* Hover arrow */}
                 <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#071938" strokeWidth="2" strokeLinecap="round">
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
                 </div>
@@ -242,7 +258,7 @@ export default function About() {
               <div 
                 className="rounded-2xl p-4 md:p-5 flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-500 hover:shadow-lg hover:-translate-y-1"
                 style={{ 
-                  background: "#c8d9b8",
+                  background: "#cfe0f7",
                   opacity: isVisible ? 1 : 0,
                   transform: isVisible ? "translateY(0)" : "translateY(30px)",
                   transition: "all 0.9s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, transform 0.3s ease",
@@ -255,14 +271,14 @@ export default function About() {
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
                   <svg width="100%" height="100%">
                     <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <circle cx="2" cy="2" r="1" fill="#1a1a1a" />
+                      <circle cx="2" cy="2" r="1" fill="#071938" />
                     </pattern>
                     <rect width="100%" height="100%" fill="url(#dots)" />
                   </svg>
                 </div>
 
-                <p className="text-[11px] md:text-[11.5px] text-[#1a1a1a]/55 leading-[1.5] relative z-10">
-                  Meditation is a tool
+                <p className="text-[11px] md:text-[11.5px] text-[#071938]/55 leading-[1.5] relative z-10">
+                  Always here for you
                 </p>
                 <div className="flex justify-center my-2 relative z-10">
                   <div 
@@ -276,9 +292,9 @@ export default function About() {
                   </div>
                 </div>
                 <div className="relative z-10">
-                  <p className="text-[10px] md:text-[11px] text-[#1a1a1a]/45 mb-0.5">Meditation is a tool</p>
+                  <p className="text-[10px] md:text-[11px] text-[#071938]/45 mb-0.5">Patients cared for</p>
                   <p
-                    className="text-[28px] md:text-[34px] font-light leading-none text-[#1a1a1a] tracking-tight tabular-nums"
+                    className="text-[28px] md:text-[34px] font-light leading-none text-[#071938] tracking-tight tabular-nums"
                   >
                     <span 
                       className="inline-block"

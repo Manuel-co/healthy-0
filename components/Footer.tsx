@@ -24,8 +24,8 @@ export default function Footer() {
   });
 
   return (
-    <div className="bg-[#e8e4dc] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
-      <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#1a1a1a]">
+    <div className="bg-[#fffef8] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
+      <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#071938]">
 
         {/* ── CTA band ── */}
         <div
@@ -37,15 +37,16 @@ export default function Footer() {
               className="text-[32px] sm:text-[40px] leading-[1.05] tracking-[-0.02em] text-white mb-3"
               style={fadeUp(ctaInView, 0)}
             >
-              Ready to start your
+              Ready to see a
               <br />
-              <em className="not-italic italic text-[#c9b99a]">healing journey?</em>
+              <em className="not-italic italic text-[#e7f1a8]">doctor today?</em>
             </h2>
             <p
               className="text-[12.5px] text-white/40 max-w-[380px] leading-[1.7]"
               style={fadeUp(ctaInView, 120)}
             >
-              Join over 12,000 people who have found balance, clarity, and happiness with Healthy-Zero.
+              Join over 12,000 people who get quality healthcare with zero boundaries, zero
+              limitations, and zero stigmatization.
             </p>
           </div>
 
@@ -53,8 +54,8 @@ export default function Footer() {
             className="flex items-center gap-3 flex-shrink-0"
             style={fadeUp(ctaInView, 220)}
           >
-            <button className="bg-[#c9b99a] text-[#1a1a1a] px-6 py-3 rounded-full text-[13px] font-medium hover:bg-[#d4c4a8] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer">
-              Get started — $3.99/m
+            <button className="bg-[#0040b2] text-[#fffef8] px-6 py-3 rounded-full text-[13px] font-medium hover:bg-[#1a56c9] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer">
+              Get started — ₦3.99/m
             </button>
             <button className="flex items-center gap-2 text-[13px] text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer group">
               Learn more
@@ -72,16 +73,12 @@ export default function Footer() {
         >
           {/* Brand column */}
           <div className="col-span-2 md:col-span-1" style={fadeUp(linksInView, 0)}>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-[26px] h-[26px] bg-[#f0ede6] rounded-[6px] flex items-center justify-center flex-shrink-0">
-                <svg viewBox="0 0 14 14" className="w-[14px] h-[14px] fill-[#1a1a1a]">
-                  <polygon points="7,1 13,5 13,11 7,13 1,11 1,5" />
-                </svg>
-              </div>
-              <span className="text-[15px] font-medium text-white tracking-tight">Healthy-Zero</span>
+            <div className="flex items-center gap-2 mb-4">
+              <img src="/logo.png" alt="" className="w-[26px] h-[26px] object-contain" />
+              <p className="text-[15px] font-medium text-white tracking-tight">HealthyZero</p>
             </div>
             <p className="text-[11.5px] text-white/35 leading-[1.7] max-w-[200px] mb-5">
-              Compassionate therapy for everyone. Every act of kindness starts with you.
+              Accessible healthcare for everyone, wherever you are.
             </p>
             {/* Socials */}
             <div className="flex items-center gap-2">
@@ -150,12 +147,26 @@ export default function Footer() {
           ))}
         </div>
 
+        {/* ── Big brand mark ── */}
+        <div
+          className="px-6 pt-14 pb-6 md:pt-20 md:pb-8 border-t border-white/10 flex flex-col items-center justify-center"
+          style={fadeUp(linksInView, 400)}
+        >
+          <img
+            src="/footerimage.png"
+            alt="HealthyZero"
+            className="w-full max-w-[420px] sm:max-w-[620px] md:max-w-[820px] lg:max-w-[960px] h-auto"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
+          <p className="text-[11px] text-white/25 mt-4 tracking-wide">Zero barriers to healthcare</p>
+        </div>
+
         {/* ── Bottom bar ── */}
         <div
           className="px-6 py-5 md:px-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3"
           style={fadeIn(linksInView, 500)}
         >
-          <p className="text-[11px] text-white/25">© 2026 Healthy-Zero. All rights reserved.</p>
+          <p className="text-[11px] text-white/25">© 2026 HealthyZero. All rights reserved.</p>
           <div className="flex items-center gap-5">
             {["Privacy", "Terms", "Cookies"].map((item) => (
               <a
