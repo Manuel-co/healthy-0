@@ -55,7 +55,7 @@ export default function Footer() {
             style={fadeUp(ctaInView, 220)}
           >
             <button className="bg-[#0040b2] text-[#fffef8] px-6 py-3 rounded-full text-[13px] font-medium hover:bg-[#1a56c9] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer">
-              Get started — ₦3.99/m
+              Get started — ₦1,500/m
             </button>
             <button className="flex items-center gap-2 text-[13px] text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer group">
               Learn more

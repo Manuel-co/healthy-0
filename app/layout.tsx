@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
+import { AuthProvider } from "@/lib/auth/auth-context";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -32,8 +33,9 @@ export default function RootLayout({
       <body
         className="min-h-full flex flex-col"
         style={{ fontFamily: "var(--font-space-mono), 'Space Mono Fallback', monospace" }}
+        suppressHydrationWarning
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

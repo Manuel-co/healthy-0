@@ -5,7 +5,7 @@ import { useInView } from "../lib/useInView";
 const plans = [
   {
     name: "Starter",
-    price: "₦3.99",
+    price: "₦1,500",
     period: "/mo",
     desc: "Perfect for getting started with HealthyZero.",
     features: [
@@ -20,7 +20,7 @@ const plans = [
   },
   {
     name: "Growth",
-    price: "₦24.99",
+    price: "₦5,000",
     period: "/mo",
     desc: "Our most popular plan for consistent progress.",
     features: [
@@ -36,7 +36,7 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "₦59.99",
+    price: "₦10,000",
     period: "/mo",
     desc: "Comprehensive care for those who want the most.",
     features: [

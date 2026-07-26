@@ -1,0 +1,128 @@
+import type { Admin, Doctor, Patient, User } from "@/lib/types";
+
+type UserPatch = Partial<Patient> & Partial<Doctor> & Partial<Admin>;
+
+const USERS_KEY = "hz_users";
+const SEED_VERSION_KEY = "hz_users_seed_version";
+// Bump this whenever seedUsers()'s shape changes, so stale localStorage data
+// from an earlier session (missing newer User fields) gets replaced instead
+// of silently drifting out of sync with the current types.
+const SEED_VERSION = "4";
+
+function seedUsers(): User[] {
+  return [
+    {
+      id: "doctor-1",
+      role: "doctor",
+      name: "Dr. Amara Okafor",
+      email: "doctor@healthyzero.dev",
+      password: "password123",
+      createdAt: "2026-01-10T09:00:00.000Z",
+      specialty: "Clinical Psychology",
+      licenseNumber: "LIC-10293",
+      focusAreas: ["Anxiety", "Depression", "Trauma"],
+      languages: ["English", "Yoruba"],
+      yearsExperience: 9,
+      bio: "I help clients build practical, sustainable coping strategies for anxiety and mood disorders.",
+      acceptingNewPatients: true,
+      profileImageUrl: null,
+      banned: false,
+      verificationStatus: "verified",
+      rejectionReason: null,
+      kyc: { idType: "National ID", idNumber: "NID-771029", documentName: "amara-id.pdf" },
+    },
+    {
+      id: "doctor-2",
+      role: "doctor",
+      name: "Dr. Femi Adeyemi",
+      email: "femi@healthyzero.dev",
+      password: "password123",
+      createdAt: "2026-01-12T09:00:00.000Z",
+      specialty: "Psychiatry",
+      licenseNumber: "LIC-88213",
+      focusAreas: ["Medication management", "Bipolar disorder"],
+      languages: ["English", "Hausa"],
+      yearsExperience: 6,
+      bio: "Board-certified psychiatrist focused on medication management alongside talk therapy.",
+      acceptingNewPatients: true,
+      profileImageUrl: null,
+      banned: false,
+      verificationStatus: "pending",
+      rejectionReason: null,
+      kyc: { idType: "Passport", idNumber: "P-4471203", documentName: "femi-passport.pdf" },
+    },
+    {
+      id: "patient-1",
+      role: "patient",
+      name: "Jordan Reyes",
+      email: "patient@healthyzero.dev",
+      password: "password123",
+      createdAt: "2026-01-15T09:00:00.000Z",
+      dob: "1994-05-12",
+      banned: false,
+      verificationStatus: "verified",
+      rejectionReason: null,
+    },
+    {
+      id: "patient-2",
+      role: "patient",
+      name: "Sam Ibrahim",
+      email: "sam@healthyzero.dev",
+      password: "password123",
+      createdAt: "2026-01-18T09:00:00.000Z",
+      dob: "1989-11-02",
+      banned: false,
+      verificationStatus: "pending",
+      rejectionReason: null,
+    },
+    {
+      id: "admin-1",
+      role: "admin",
+      name: "Platform Admin",
+      email: "admin@healthyzero.dev",
+      password: "password123",
+      createdAt: "2026-01-01T09:00:00.000Z",
+      banned: false,
+    },
+  ];
+}
+
+export function getUsers(): User[] {
+  if (typeof window === "undefined") return [];
+  const raw = window.localStorage.getItem(USERS_KEY);
+  const seededAtVersion = window.localStorage.getItem(SEED_VERSION_KEY);
+  if (!raw || seededAtVersion !== SEED_VERSION) {
+    const seeded = seedUsers();
+    window.localStorage.setItem(USERS_KEY, JSON.stringify(seeded));
+    window.localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
+    return seeded;
+  }
+  return JSON.parse(raw) as User[];
+}
+
+export function saveUsers(users: User[]): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+export function findUserByEmail(email: string): User | undefined {
+  return getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
+}
+
+export function findUserById(id: string): User | undefined {
+  return getUsers().find((u) => u.id === id);
+}
+
+export function createUser(user: User): void {
+  const users = getUsers();
+  users.push(user);
+  saveUsers(users);
+}
+
+export function updateUser(id: string, patch: UserPatch): void {
+  const users = getUsers();
+  const index = users.findIndex((u) => u.id === id);
+  if (index === -1) return;
+  users[index] = { ...users[index], ...patch } as User;
+  saveUsers(users);
+}

@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth/auth-context";
+import { dashboardPathFor } from "@/lib/routes";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { currentUser } = useAuth();
 
   return (
     <div className="bg-[#fffef8] px-3 pt-3 sm:px-4 sm:pt-4 lg:px-5 lg:pt-5">
@@ -29,6 +32,27 @@ export default function Navbar() {
           </div>
         </div>
 
+        {/* Auth actions — desktop only */}
+        <div className="hidden md:flex items-center gap-3 text-sm">
+          {currentUser ? (
+            <Link
+              href={dashboardPathFor(currentUser.role)}
+              className="px-4 py-2 rounded-full bg-[#071938] text-[#fffef8] font-medium"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-[#071938]/70 hover:text-[#071938] font-medium">
+                Log in
+              </Link>
+              <Link href="/signup" className="px-4 py-2 rounded-full bg-[#071938] text-[#fffef8] font-medium">
+                Sign up
+              </Link>
+            </>
+          )}
+        </div>
+
         {/* Hamburger — mobile only, nav links cover desktop */}
         <button
           aria-label="Toggle menu"
@@ -47,6 +71,17 @@ export default function Navbar() {
           <Link href="/" className="text-[15px] font-medium text-[#071938]">Home</Link>
           <Link href="/#about" className="text-[15px] text-[#071938]/60">About Us</Link>
           <Link href="/#pricing" className="text-[15px] text-[#071938]/60">Pricing</Link>
+          <div className="h-px bg-black/10 my-1" />
+          {currentUser ? (
+            <Link href={dashboardPathFor(currentUser.role)} className="text-[15px] font-medium text-[#071938]">
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-[15px] font-medium text-[#071938]">Log in</Link>
+              <Link href="/signup" className="text-[15px] font-medium text-[#071938]">Sign up</Link>
+            </>
+          )}
         </div>
       )}
     </nav>

@@ -2,11 +2,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useAuth } from "@/lib/auth/auth-context";
+import { dashboardPathFor } from "@/lib/routes";
 
 export default function HeroSection() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const { currentUser } = useAuth();
 
   // Trigger entrance animations after mount
   useEffect(() => {
@@ -31,6 +35,7 @@ export default function HeroSection() {
         {/* Photo fills the entire card with parallax */}
         <img
           src="https://images.unsplash.com/photo-1675270427967-b8f09d7c939b?w=1400&auto=format&fit=crop&q=85"
+          // src="/hero1.png"
           alt="Doctor consulting with patient"
           className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out"
           style={{ transform: `scale(1.05) translateY(${scrollY * 0.15}px)` }}
@@ -132,6 +137,20 @@ export default function HeroSection() {
               ))}
             </nav>
 
+            {/* Login / Dashboard — hidden on mobile */}
+            <Link
+              href={currentUser ? dashboardPathFor(currentUser.role) : "/login"}
+              className="hidden md:inline-flex items-center text-[13px] font-medium px-4 py-1.5 rounded-full bg-[#071938] text-[#fffef8] hover:bg-[#071938]/90 transition-all duration-300"
+              style={{
+                opacity: isLoaded ? 1 : 0,
+                transform: isLoaded ? "translateY(0)" : "translateY(-10px)",
+                transition: "all 0.7s ease-out",
+                transitionDelay: "550ms",
+              }}
+            >
+              {currentUser ? "Dashboard" : "Log in"}
+            </Link>
+
             {/* Hamburger with enhanced animation — mobile only, nav links cover desktop */}
             <button
               aria-label="Toggle menu"
@@ -167,6 +186,17 @@ export default function HeroSection() {
               {item}
             </a>
           ))}
+          <Link
+            href={currentUser ? dashboardPathFor(currentUser.role) : "/login"}
+            className="text-[15px] py-2 font-medium text-[#071938] transition-all duration-300"
+            style={{
+              transform: menuOpen ? "translateX(0)" : "translateX(-20px)",
+              opacity: menuOpen ? 1 : 0,
+              transitionDelay: "225ms",
+            }}
+          >
+            {currentUser ? "Dashboard" : "Log in"}
+          </Link>
         </div>
 
         {/* ── LEFT CONTENT — 50% wide ── */}
@@ -246,7 +276,7 @@ export default function HeroSection() {
             >
               <button className="relative bg-[#071938] text-[#ffffff] px-5 py-2.5 rounded-full text-[12.5px] sm:text-[13px] font-normal tracking-[0.01em] cursor-pointer overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-black/20 hover:scale-105 active:scale-95">
                 <span className="relative z-10 flex items-center gap-2">
-                  Only ₦3.99/m
+                  Only ₦1,500/m
                   <span className="inline-block transition-transform duration-300 group-hover:translate-x-0.5">→</span>
                 </span>
                 <span className="absolute inset-0 bg-gradient-to-r from-[#0a2c5c] to-[#071938] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

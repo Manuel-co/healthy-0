@@ -13,9 +13,9 @@ export default function HomePage() {
       <div className="max-w-[1440px] mx-auto">
         <main>
           <HeroSection />
+          <Services />
           <Mission />
           <About />
-          <Services />
           <Therapists />
           <Testimonials />
           <Pricing />
