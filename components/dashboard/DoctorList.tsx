@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { DoctorAvatar } from "@/components/dashboard/DoctorAvatar";
+import { SortableTableHead } from "@/components/dashboard/SortableTableHead";
 import type { Doctor } from "@/lib/types";
 
 interface DoctorListProps {
@@ -16,9 +17,22 @@ interface DoctorListProps {
   variant?: "admin" | "directory";
   /** Directory variant only — e.g. a Request/Requested button per row. */
   renderAction?: (doctor: Doctor) => ReactNode;
+  /** Admin variant only — makes Name/Patients/Status headers clickable sort toggles. */
+  sortBy?: string;
+  sortDir?: "asc" | "desc";
+  onSortChange?: (column: string) => void;
 }
 
-export function DoctorList({ doctors, basePath, patientCounts, variant = "admin", renderAction }: DoctorListProps) {
+export function DoctorList({
+  doctors,
+  basePath,
+  patientCounts,
+  variant = "admin",
+  renderAction,
+  sortBy,
+  sortDir,
+  onSortChange,
+}: DoctorListProps) {
   if (doctors.length === 0) {
     return <p className="text-sm text-muted-foreground">No doctors yet.</p>;
   }
@@ -61,23 +75,32 @@ export function DoctorList({ doctors, basePath, patientCounts, variant = "admin"
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
+          <SortableTableHead label="Name" column="name" activeColumn={sortBy} direction={sortDir} onSort={onSortChange} />
           <TableHead>Specialty</TableHead>
-          <TableHead>Patients</TableHead>
-          <TableHead>Status</TableHead>
+          <SortableTableHead
+            label="Patients"
+            column="patients"
+            activeColumn={sortBy}
+            direction={sortDir}
+            onSort={onSortChange}
+          />
+          <SortableTableHead label="Status" column="status" activeColumn={sortBy} direction={sortDir} onSort={onSortChange} />
         </TableRow>
       </TableHeader>
       <TableBody>
         {doctors.map((doctor) => (
-          <TableRow key={doctor.id}>
-            <TableCell>
+          <TableRow key={doctor.id} className="relative cursor-pointer">
+            <TableCell className="relative">
               <Link
                 href={`${basePath ?? ""}/${doctor.id}`}
-                className="flex items-center gap-2.5 font-medium text-[#071938] hover:underline"
+                className="absolute inset-0 z-0 rounded-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#071938]/40"
               >
+                <span className="sr-only">View {doctor.name}</span>
+              </Link>
+              <div className="relative z-[1] flex items-center gap-2.5 font-medium text-[#071938]">
                 <DoctorAvatar doctor={doctor} size="sm" />
                 {doctor.name}
-              </Link>
+              </div>
             </TableCell>
             <TableCell className="text-muted-foreground">{doctor.specialty}</TableCell>
             <TableCell className="text-muted-foreground">{patientCounts?.[doctor.id] ?? 0}</TableCell>

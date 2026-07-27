@@ -127,21 +127,44 @@ export async function sendMessage(
   return message;
 }
 
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+function isWithinLastWeek(iso: string): boolean {
+  return Date.now() - new Date(iso).getTime() <= ONE_WEEK_MS;
+}
+
+export interface PlatformStatsTrends {
+  newPatientsThisWeek: number;
+  newDoctorsThisWeek: number;
+  newMessagesThisWeek: number;
+  newPendingThisWeek: number;
+}
+
 export interface PlatformStats {
   totalPatients: number;
   totalDoctors: number;
   totalMessages: number;
   pendingVerifications: number;
+  trends: PlatformStatsTrends;
 }
 
 export async function getPlatformStats(): Promise<PlatformStats> {
   const users = getUsers();
+  const messages = readMessages();
+  const patients = users.filter((u) => u.role === "patient");
+  const doctors = users.filter((u) => u.role === "doctor");
+  const pending = users.filter((u) => u.role !== "admin" && u.verificationStatus === "pending");
+
   return {
-    totalPatients: users.filter((u) => u.role === "patient").length,
-    totalDoctors: users.filter((u) => u.role === "doctor").length,
-    totalMessages: readMessages().length,
-    pendingVerifications: users.filter(
-      (u) => u.role !== "admin" && u.verificationStatus === "pending"
-    ).length,
+    totalPatients: patients.length,
+    totalDoctors: doctors.length,
+    totalMessages: messages.length,
+    pendingVerifications: pending.length,
+    trends: {
+      newPatientsThisWeek: patients.filter((p) => isWithinLastWeek(p.createdAt)).length,
+      newDoctorsThisWeek: doctors.filter((d) => isWithinLastWeek(d.createdAt)).length,
+      newMessagesThisWeek: messages.filter((m) => isWithinLastWeek(m.createdAt)).length,
+      newPendingThisWeek: pending.filter((p) => isWithinLastWeek(p.createdAt)).length,
+    },
   };
 }

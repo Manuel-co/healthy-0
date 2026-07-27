@@ -5,6 +5,11 @@ import { Users, Stethoscope, MessageSquare, ShieldAlert } from "lucide-react";
 import { useRequireRole } from "@/hooks/useRequireRole";
 import { getPlatformStats, type PlatformStats } from "@/lib/messaging";
 import { StatCard } from "@/components/dashboard/StatCard";
+import { PendingVerificationsSection } from "@/components/dashboard/PendingVerificationsSection";
+
+function weeklyTrend(count: number): string | undefined {
+  return count > 0 ? `+${count} this week` : undefined;
+}
 
 export default function AdminOverviewPage() {
   const { user, loading } = useRequireRole("admin");
@@ -14,6 +19,10 @@ export default function AdminOverviewPage() {
     if (!user) return;
     getPlatformStats().then(setStats);
   }, [user]);
+
+  function refreshStats() {
+    getPlatformStats().then(setStats);
+  }
 
   if (loading || !user) return null;
 
@@ -25,11 +34,36 @@ export default function AdminOverviewPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total patients" value={stats?.totalPatients ?? "—"} icon={Users} />
-        <StatCard label="Total doctors" value={stats?.totalDoctors ?? "—"} icon={Stethoscope} />
-        <StatCard label="Total messages" value={stats?.totalMessages ?? "—"} icon={MessageSquare} />
-        <StatCard label="Pending verifications" value={stats?.pendingVerifications ?? "—"} icon={ShieldAlert} />
+        <StatCard
+          label="Total patients"
+          value={stats?.totalPatients ?? "—"}
+          icon={Users}
+          href="/admin/patients"
+          trend={stats ? weeklyTrend(stats.trends.newPatientsThisWeek) : undefined}
+        />
+        <StatCard
+          label="Total doctors"
+          value={stats?.totalDoctors ?? "—"}
+          icon={Stethoscope}
+          href="/admin/doctors"
+          trend={stats ? weeklyTrend(stats.trends.newDoctorsThisWeek) : undefined}
+        />
+        <StatCard
+          label="Total messages"
+          value={stats?.totalMessages ?? "—"}
+          icon={MessageSquare}
+          trend={stats ? weeklyTrend(stats.trends.newMessagesThisWeek) : undefined}
+        />
+        <StatCard
+          label="Pending verifications"
+          value={stats?.pendingVerifications ?? "—"}
+          icon={ShieldAlert}
+          href="/admin#pending-verifications"
+          trend={stats ? weeklyTrend(stats.trends.newPendingThisWeek) : undefined}
+        />
       </div>
+
+      <PendingVerificationsSection onChange={refreshStats} />
     </div>
   );
 }
