@@ -62,15 +62,36 @@ export interface Assignment {
   updatedAt: string;
 }
 
-export interface Conversation {
+export type SessionStatus = "active" | "completed";
+
+/**
+ * A time-boxed doctor↔patient chat thread. startedAt is set when someone
+ * joins (not a scheduled time), expiresAt = startedAt + SESSION_DURATION_MINS
+ * (see lib/sessions-data.ts). Once locked (expired or manually ended), the
+ * thread's messages stay readable forever but can't accept new ones.
+ */
+export interface Session {
   id: string;
   patientId: string;
   doctorId: string;
+  status: SessionStatus;
+  startedAt: string;
+  expiresAt: string;
+  endedAt: string | null;
+}
+
+/** A doctor's private note attached to a session. No UI yet — data layer only. */
+export interface SessionNote {
+  id: string;
+  sessionId: string;
+  authorId: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface Message {
   id: string;
-  conversationId: string;
+  sessionId: string;
   senderId: string;
   text: string;
   imageUrl: string | null;
