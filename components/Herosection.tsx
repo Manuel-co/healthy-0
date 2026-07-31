@@ -65,8 +65,8 @@ export default function HeroSection() {
         >
           {/* Logo — sits on the left (beige) half */}
           <div className="flex items-center gap-2.5 text-[14px] sm:text-[15px] font-medium tracking-tight text-[#071938] group cursor-pointer">
-            <div className="w-[34px] h-[34px] bg-[#071938] rounded-[8px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              <img src="/logo.png" alt="" className="w-[24px] h-[24px] object-contain" />
+            <div className="w-[34px] h-[34px] flex items-center justify-center flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+              <img src="/Healthy0-Logo 2.svg" alt="" className="w-[24px] h-[24px] object-contain" />
             </div>
             <span className="relative">
               HealthyZero

@@ -153,10 +153,10 @@ export default function Footer() {
           style={fadeUp(linksInView, 400)}
         >
           <img
-            src="/footerimage.png"
+            src="/Healthy0 Logo 1-08.svg"
             alt="HealthyZero"
             className="w-full max-w-[420px] sm:max-w-[620px] md:max-w-[820px] lg:max-w-[960px] h-auto"
-            style={{ filter: "brightness(0) invert(1)" }}
+            // style={{ filter: "brightness(0) invert(1)" }}
           />
           <p className="text-[11px] text-white/25 mt-4 tracking-wide">Zero barriers to healthcare</p>
         </div>

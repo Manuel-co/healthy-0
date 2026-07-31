@@ -10,9 +10,40 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Assignment, Doctor } from "@/lib/types";
 
 const ALL = "__all__";
+
+function DoctorDirectorySkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-7 w-40" />
+        <Skeleton className="h-4 w-72" />
+      </div>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-5 w-16" />
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-4">
+          <Skeleton className="h-9 w-48" />
+          <Skeleton className="h-9 w-48" />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-5 w-24" />
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+          <Skeleton className="h-10 w-full" />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function PatientDoctorDirectoryPage() {
   const { user, loading } = useRequireRole("patient");
@@ -22,6 +53,8 @@ export default function PatientDoctorDirectoryPage() {
   const [language, setLanguage] = useState(ALL);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
   const [requestingId, setRequestingId] = useState<string | null>(null);
+  const [requestError, setRequestError] = useState<string | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
 
   const refresh = useCallback(async () => {
     if (!user) return;
@@ -39,6 +72,7 @@ export default function PatientDoctorDirectoryPage() {
       ([verifiedDoctors, patientAssignments]) => {
         setDoctors(verifiedDoctors);
         setAssignments(patientAssignments);
+        setDataLoading(false);
       }
     );
   }, [user]);
@@ -64,12 +98,18 @@ export default function PatientDoctorDirectoryPage() {
   async function handleRequest(doctorId: string) {
     if (!user) return;
     setRequestingId(doctorId);
-    await requestAssignment(user.id, doctorId);
-    await refresh();
+    setRequestError(null);
+    try {
+      await requestAssignment(user.id, doctorId);
+      await refresh();
+    } catch (err) {
+      setRequestError(err instanceof Error ? err.message : "Couldn't send that request.");
+    }
     setRequestingId(null);
   }
 
   if (loading || !user) return null;
+  if (dataLoading) return <DoctorDirectorySkeleton />;
 
   return (
     <div className="space-y-6">
@@ -135,7 +175,8 @@ export default function PatientDoctorDirectoryPage() {
           <CardTitle>{filteredDoctors.length} doctor{filteredDoctors.length === 1 ? "" : "s"}</CardTitle>
           <CardDescription>Verified doctors only.</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
+          {requestError && <p className="text-sm text-destructive">{requestError}</p>}
           <DoctorList
             doctors={filteredDoctors}
             variant="directory"
@@ -155,6 +196,13 @@ export default function PatientDoctorDirectoryPage() {
                 return (
                   <Button size="sm" variant="outline" disabled>
                     Requested
+                  </Button>
+                );
+              }
+              if (!doctor.acceptingNewPatients) {
+                return (
+                  <Button size="sm" variant="outline" disabled>
+                    Not accepting patients
                   </Button>
                 );
               }

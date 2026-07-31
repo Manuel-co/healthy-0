@@ -5,12 +5,20 @@ import { useRouter } from "next/navigation";
 import { useRequireRole } from "@/hooks/useRequireRole";
 import { getPatientById } from "@/lib/patients-data";
 import { getAssignmentForPair, acceptAssignment, declineAssignment } from "@/lib/assignments";
-import { getSessionsForPair, getCurrentSession, startSession, isSessionActive } from "@/lib/sessions-data";
+import {
+  getSessionHistory,
+  getNextSession,
+  startSession,
+  joinSession,
+  canJoinSession,
+  cancelSession,
+} from "@/lib/sessions-data";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { SessionStatusBadge } from "@/components/dashboard/SessionStatusBadge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { calculateAge, cn } from "@/lib/utils";
+import { calculateAge, cn, formatSessionDate, formatSessionDuration } from "@/lib/utils";
 import type { Assignment, Doctor, Patient, Session } from "@/lib/types";
 
 export default function DoctorPatientDetailPage({
@@ -23,20 +31,25 @@ export default function DoctorPatientDetailPage({
   const router = useRouter();
   const [patient, setPatient] = useState<Patient | null>(null);
   const [assignment, setAssignment] = useState<Assignment | null>(null);
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const [history, setHistory] = useState<Session[]>([]);
+  const [nextSession, setNextSession] = useState<Session | null>(null);
   const [viewingSessionId, setViewingSessionId] = useState<string | null>(null);
   const [acting, setActing] = useState(false);
   const [starting, setStarting] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [startError, setStartError] = useState<string | null>(null);
 
   const loadSessions = useCallback(
     async (doctorId: string) => {
-      const [list, current] = await Promise.all([
-        getSessionsForPair(patientId, doctorId),
-        getCurrentSession(patientId, doctorId),
+      const [historyList, next] = await Promise.all([
+        getSessionHistory(patientId, doctorId),
+        getNextSession(patientId, doctorId),
       ]);
-      setSessions(list);
-      setViewingSessionId(current?.id ?? null);
+      setHistory(historyList);
+      setNextSession(next);
+      // Scheduled-but-not-started sessions get their own "Upcoming" card, not the chat.
+      setViewingSessionId(next?.status === "active" ? next.id : null);
     },
     [patientId]
   );
@@ -76,12 +89,39 @@ export default function DoctorPatientDetailPage({
     setStartError(null);
     try {
       const session = await startSession(patientId, user.id);
-      setSessions((prev) => [session, ...prev]);
+      setNextSession(session);
       setViewingSessionId(session.id);
     } catch (err) {
       setStartError(err instanceof Error ? err.message : "Couldn't start the session.");
     }
     setStarting(false);
+  }
+
+  async function handleJoin() {
+    if (!nextSession) return;
+    setJoining(true);
+    setStartError(null);
+    try {
+      const active = await joinSession(nextSession.id);
+      setNextSession(active);
+      setViewingSessionId(active.id);
+    } catch (err) {
+      setStartError(err instanceof Error ? err.message : "Couldn't join the session.");
+    }
+    setJoining(false);
+  }
+
+  async function handleCancel() {
+    if (!nextSession || !user) return;
+    setCancelling(true);
+    setStartError(null);
+    try {
+      await cancelSession(nextSession.id, user.id);
+      await loadSessions(user.id);
+    } catch (err) {
+      setStartError(err instanceof Error ? err.message : "Couldn't cancel the session.");
+    }
+    setCancelling(false);
   }
 
   if (loading || !user) return null;
@@ -101,6 +141,10 @@ export default function DoctorPatientDetailPage({
           <p>
             <span className="text-muted-foreground">Date of birth: </span>
             {patient.dob} <span className="text-[#071938]/40">({calculateAge(patient.dob)})</span>
+          </p>
+          <p>
+            <span className="text-muted-foreground">Reason for care: </span>
+            {patient.presentingConcern || <span className="text-[#071938]/40">Not shared yet</span>}
           </p>
         </CardContent>
       </Card>
@@ -143,6 +187,33 @@ export default function DoctorPatientDetailPage({
                   onBookNext={handleStartSession}
                 />
               </div>
+            ) : nextSession?.status === "scheduled" ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Upcoming session</CardTitle>
+                  <CardDescription>
+                    {nextSession.scheduledFor &&
+                      new Date(nextSession.scheduledFor).toLocaleString([], {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}{" "}
+                    with {patient.name}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {startError && <p className="text-sm text-destructive">{startError}</p>}
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" disabled={joining || cancelling || !canJoinSession(nextSession)} onClick={handleJoin}>
+                      {joining ? "Joining..." : canJoinSession(nextSession) ? "Join session" : "Not yet time to join"}
+                    </Button>
+                    <Button size="sm" variant="outline" disabled={joining || cancelling} onClick={handleCancel}>
+                      {cancelling ? "Cancelling..." : "Cancel"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
               <Card>
                 <CardHeader>
@@ -158,31 +229,34 @@ export default function DoctorPatientDetailPage({
               </Card>
             )}
 
-            {sessions.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Session history</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {sessions.map((s) => (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Session history</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {history.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No past sessions yet.</p>
+                ) : (
+                  history.map((s) => (
                     <button
                       key={s.id}
                       type="button"
                       onClick={() => setViewingSessionId(s.id)}
                       className={cn(
-                        "flex w-full items-center justify-between rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:bg-[#071938]/5",
+                        "flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:bg-[#071938]/5",
                         viewingSessionId === s.id && "bg-[#071938]/[0.06]"
                       )}
                     >
-                      <span className="text-[#071938]">
-                        {new Date(s.startedAt).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
-                      </span>
-                      <span className="text-xs text-muted-foreground">{isSessionActive(s) ? "Active" : "Ended"}</span>
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <span className="text-[#071938]">{formatSessionDate(s.endedAt, s.scheduledFor, s.startedAt)}</span>
+                        <span className="text-xs text-muted-foreground">{formatSessionDuration(s.startedAt, s.endedAt)}</span>
+                      </div>
+                      <SessionStatusBadge status={s.status} />
                     </button>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+                  ))
+                )}
+              </CardContent>
+            </Card>
           </div>
         ))}
 

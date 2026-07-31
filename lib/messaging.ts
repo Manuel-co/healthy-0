@@ -1,14 +1,17 @@
 import { getUsers } from "@/lib/auth/mock-db";
 import { getPatientsForDoctor } from "@/lib/doctors-data";
-import { getSessionsForPair, canSendMessage } from "@/lib/sessions-data";
-import type { Message, Patient, Session } from "@/lib/types";
+import { getPatientById } from "@/lib/patients-data";
+import { getSessionsForPair, canSendMessage, getSessionById } from "@/lib/sessions-data";
+import { createNotification } from "@/lib/notifications-data";
+import { getEntitlements } from "@/lib/plans";
+import type { Message, MessageAttachment, Patient, Session } from "@/lib/types";
 
 const MESSAGES_KEY = "hz_messages";
 const MESSAGES_SEED_VERSION_KEY = "hz_messages_seed_version";
 // Bump whenever seedMessages()'s shape changes (see lib/auth/mock-db.ts for
 // why: stale localStorage data from an earlier session would otherwise be
 // missing newer Message fields).
-const MESSAGES_SEED_VERSION = "3";
+const MESSAGES_SEED_VERSION = "4";
 
 const READ_RECEIPTS_KEY = "hz_read_receipts";
 
@@ -33,7 +36,7 @@ function seedMessages(): Message[] {
       sessionId: "session-1",
       senderId: "doctor-1",
       text: "Hi Jordan, how has your week been since our last session?",
-      imageUrl: null,
+      attachment: null,
       createdAt: "2026-07-20T14:00:00.000Z",
     },
     {
@@ -41,7 +44,7 @@ function seedMessages(): Message[] {
       sessionId: "session-1",
       senderId: "patient-1",
       text: "Better, thanks. I've been keeping up with the journaling exercise.",
-      imageUrl: null,
+      attachment: null,
       createdAt: "2026-07-20T14:05:00.000Z",
     },
     {
@@ -49,7 +52,7 @@ function seedMessages(): Message[] {
       sessionId: "session-1",
       senderId: "doctor-1",
       text: "That's great to hear. Let's dig into that at our next session.",
-      imageUrl: null,
+      attachment: null,
       createdAt: "2026-07-20T14:07:00.000Z",
     },
   ];
@@ -121,7 +124,8 @@ export async function getUnreadCountForSession(sessionId: string, userId: string
 
 export function messagePreviewText(message: Message): string {
   if (message.text) return message.text;
-  if (message.imageUrl) return "📷 Photo";
+  if (message.attachment?.type === "image") return "📷 Photo";
+  if (message.attachment?.type === "document") return "📄 Document";
   return "";
 }
 
@@ -129,25 +133,55 @@ export function messagePreviewText(message: Message): string {
  * Enforces the lock itself — a session that's expired or completed can't be
  * posted to even by a stale client calling this function directly. Hiding
  * the composer in the UI is presentation on top of this, not the guard.
+ *
+ * Attachment gating reads the SESSION's patient's plan, not the sender's
+ * role — a Basic-tier session can't carry documents/images regardless of
+ * whether the patient or the doctor is the one attaching, since it's the
+ * patient's subscription that's paying for (and thus gating) the thread.
  */
 export async function sendMessage(
   sessionId: string,
   senderId: string,
   text: string,
-  imageUrl: string | null = null
+  attachment: MessageAttachment | null = null
 ): Promise<Message> {
   if (!(await canSendMessage(sessionId))) {
     throw new Error("This session has ended and can no longer accept messages.");
   }
+  const session = await getSessionById(sessionId);
+  if (attachment) {
+    const patient = session ? await getPatientById(session.patientId) : undefined;
+    const entitlements = patient ? getEntitlements(patient) : null;
+    const allowed = attachment.type === "document" ? entitlements?.canShareDocuments : entitlements?.canShareImages;
+    if (!allowed) {
+      throw new Error(`Sharing ${attachment.type}s isn't available on this plan.`);
+    }
+  }
+
   const message: Message = {
     id: `msg-${Date.now()}`,
     sessionId,
     senderId,
     text,
-    imageUrl,
+    attachment,
     createdAt: new Date().toISOString(),
   };
   writeMessages([...readMessages(), message]);
+
+  if (session) {
+    const recipientId = senderId === session.patientId ? session.doctorId : session.patientId;
+    const recipientIsPatient = recipientId === session.patientId;
+    const sender = getUsers().find((u) => u.id === senderId);
+    await createNotification(
+      recipientId,
+      "new-message",
+      "New message",
+      `${sender?.name ?? "Someone"} sent you a message.`,
+      recipientIsPatient ? "/dashboard/patient/messages" : "/dashboard/doctor/messages",
+      sessionId
+    );
+  }
+
   return message;
 }
 

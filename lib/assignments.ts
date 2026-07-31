@@ -1,4 +1,6 @@
-import type { Assignment, AssignmentStatus } from "@/lib/types";
+import { getUsers } from "@/lib/auth/mock-db";
+import { createNotification } from "@/lib/notifications-data";
+import type { Assignment, AssignmentStatus, Doctor } from "@/lib/types";
 
 const ASSIGNMENTS_KEY = "hz_assignments";
 
@@ -103,6 +105,12 @@ export async function requestAssignment(patientId: string, doctorId: string): Pr
   );
   if (existing) return existing;
 
+  const doctor = getUsers().find((u): u is Doctor => u.role === "doctor" && u.id === doctorId);
+  if (!doctor) throw new Error("Doctor not found.");
+  if (!doctor.acceptingNewPatients) {
+    throw new Error(`${doctor.name} isn't accepting new patients right now.`);
+  }
+
   const current = readAssignments().find(
     (a) => a.patientId === patientId && a.doctorId !== doctorId && (a.status === "active" || a.status === "requested")
   );
@@ -133,6 +141,19 @@ export async function acceptAssignment(assignmentId: string): Promise<Assignment
   }
 
   await updateAssignmentStatus(assignmentId, "active");
+
+  const doctor = getUsers().find((u): u is Doctor => u.role === "doctor" && u.id === assignment.doctorId);
+  if (doctor) {
+    await createNotification(
+      assignment.patientId,
+      "request-accepted",
+      "Request accepted",
+      `${doctor.name} accepted your request. Say hello!`,
+      "/dashboard/patient",
+      assignment.id
+    );
+  }
+
   return { ...assignment, status: "active" };
 }
 

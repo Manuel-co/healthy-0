@@ -40,6 +40,20 @@ export function formatCountdown(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
+/** endedAt if it ran, else scheduledFor if it never started, formatted as "Jul 28, 2026" — "—" if neither is set. */
+export function formatSessionDate(endedAt: string | null, scheduledFor: string | null, startedAt: string | null): string {
+  const when = endedAt ?? scheduledFor ?? startedAt
+  if (!when) return "—"
+  return new Date(when).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })
+}
+
+/** How long a session actually ran, e.g. "24 min" — "—" if it never started (cancelled/no-show). */
+export function formatSessionDuration(startedAt: string | null, endedAt: string | null): string {
+  if (!startedAt || !endedAt) return "—"
+  const minutes = Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 60_000)
+  return `${Math.max(minutes, 0)} min`
+}
+
 export function calculateAge(dob: string): number {
   const birthDate = new Date(dob)
   const today = new Date()

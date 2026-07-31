@@ -8,6 +8,7 @@ import {
 } from "@/lib/auth/mock-db";
 import { pickFallbackDoctor } from "@/lib/doctors-data";
 import { createAssignment } from "@/lib/assignments";
+import { createDefaultSubscription } from "@/lib/plans";
 import type { Doctor, KycInfo, Patient, User } from "@/lib/types";
 
 const SESSION_KEY = "hz_session";
@@ -80,9 +81,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: input.password,
       createdAt: new Date().toISOString(),
       dob: input.dob,
+      presentingConcern: "",
       banned: false,
       verificationStatus: "pending",
       rejectionReason: null,
+      subscription: createDefaultSubscription(),
     };
     createUser(patient);
     // Discovery/request is patient-led (see the doctor directory); this is only

@@ -1,4 +1,4 @@
-import type { Admin, Doctor, Patient, User } from "@/lib/types";
+import type { Admin, Doctor, Patient, Subscription, User } from "@/lib/types";
 
 type UserPatch = Partial<Patient> & Partial<Doctor> & Partial<Admin>;
 
@@ -7,7 +7,7 @@ const SEED_VERSION_KEY = "hz_users_seed_version";
 // Bump this whenever seedUsers()'s shape changes, so stale localStorage data
 // from an earlier session (missing newer User fields) gets replaced instead
 // of silently drifting out of sync with the current types.
-const SEED_VERSION = "4";
+const SEED_VERSION = "6";
 
 function seedUsers(): User[] {
   return [
@@ -59,9 +59,11 @@ function seedUsers(): User[] {
       password: "password123",
       createdAt: "2026-01-15T09:00:00.000Z",
       dob: "1994-05-12",
+      presentingConcern: "Ongoing anxiety around work deadlines and difficulty sleeping.",
       banned: false,
       verificationStatus: "verified",
       rejectionReason: null,
+      subscription: { tier: "basic", cycleStartDate: "2026-01-15T09:00:00.000Z", status: "active" },
     },
     {
       id: "patient-2",
@@ -71,9 +73,11 @@ function seedUsers(): User[] {
       password: "password123",
       createdAt: "2026-01-18T09:00:00.000Z",
       dob: "1989-11-02",
+      presentingConcern: "Feeling low motivation and wanting support adjusting to a recent move.",
       banned: false,
       verificationStatus: "pending",
       rejectionReason: null,
+      subscription: { tier: "pro", cycleStartDate: "2026-01-18T09:00:00.000Z", status: "active" },
     },
     {
       id: "admin-1",
@@ -87,6 +91,17 @@ function seedUsers(): User[] {
   ];
 }
 
+function defaultSubscription(): Subscription {
+  return { tier: "basic", cycleStartDate: new Date().toISOString(), status: "active" };
+}
+
+/**
+ * A version bump only replaces the fixed seed users — a real account created
+ * before a field existed (e.g. a patient signed up before `subscription` was
+ * added) survives every reseed untouched, since reseeding is all-or-nothing
+ * at the array level, not per-record. This repairs any such record in place
+ * so the rest of the app never has to defend against a missing field.
+ */
 export function getUsers(): User[] {
   if (typeof window === "undefined") return [];
   const raw = window.localStorage.getItem(USERS_KEY);
@@ -97,7 +112,17 @@ export function getUsers(): User[] {
     window.localStorage.setItem(SEED_VERSION_KEY, SEED_VERSION);
     return seeded;
   }
-  return JSON.parse(raw) as User[];
+
+  let backfilled = false;
+  const users = (JSON.parse(raw) as User[]).map((u): User => {
+    if (u.role === "patient" && !u.subscription) {
+      backfilled = true;
+      return { ...u, subscription: defaultSubscription() };
+    }
+    return u;
+  });
+  if (backfilled) saveUsers(users);
+  return users;
 }
 
 export function saveUsers(users: User[]): void {
