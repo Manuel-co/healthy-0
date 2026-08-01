@@ -119,7 +119,7 @@ export default function HeroSection() {
                 transitionDelay: "500ms",
               }}
             >
-              {["Home", "About Us", "Pricing"].map((item, i) => (
+              {["Home", "About Us", "Services"].map((item, i) => (
                 <a 
                   key={item}
                   href="#" 

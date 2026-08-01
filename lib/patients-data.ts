@@ -1,6 +1,6 @@
 import { getUsers, updateUser } from "@/lib/auth/mock-db";
 import { getActiveAssignmentForPatient } from "@/lib/assignments";
-import type { Doctor, Patient } from "@/lib/types";
+import type { Doctor, Intake, Patient, UrgencyLevel } from "@/lib/types";
 
 export async function getAllPatients(): Promise<Patient[]> {
   return getUsers().filter((u): u is Patient => u.role === "patient");
@@ -26,6 +26,34 @@ export interface PatientProfileUpdate {
 /** Patient self-service edit — email is intentionally not editable here. */
 export async function updatePatientProfile(patientId: string, updates: PatientProfileUpdate): Promise<Patient> {
   updateUser(patientId, updates);
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Patient not found.");
+  return patient;
+}
+
+export interface IntakeFormInput {
+  presentingConcern: string;
+  focusAreas: string[];
+  preferredLanguage: string | null;
+  urgency: UrgencyLevel | null;
+}
+
+/**
+ * Saves the find-a-doctor intake (and the presentingConcern captured
+ * alongside it). Re-runnable — a patient can resubmit to update their
+ * matching info at any time, editable later from their profile. Pure
+ * persistence only: this does NOT run matching or touch assignments, so it
+ * has no opinion on tier gating — see lib/matching.ts and the doctors page
+ * for what happens with the saved intake.
+ */
+export async function saveIntake(patientId: string, input: IntakeFormInput): Promise<Patient> {
+  const intake: Intake = {
+    focusAreas: input.focusAreas,
+    preferredLanguage: input.preferredLanguage,
+    urgency: input.urgency,
+    completedAt: new Date().toISOString(),
+  };
+  updateUser(patientId, { presentingConcern: input.presentingConcern, intake });
   const patient = await getPatientById(patientId);
   if (!patient) throw new Error("Patient not found.");
   return patient;

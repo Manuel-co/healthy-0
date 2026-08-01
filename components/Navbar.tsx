@@ -30,7 +30,7 @@ export default function Navbar() {
             <div className="flex items-center gap-6 lg:gap-7 text-sm">
               <Link href="/" className="text-[#071938] font-medium">Home</Link>
               <Link href="/#about" className="text-[#071938]/60 hover:text-[#071938] transition-colors">About Us</Link>
-              <Link href="/#pricing" className="text-[#071938]/60 hover:text-[#071938] transition-colors">Pricing</Link>
+              <Link href="/services" className="text-[#071938]/60 hover:text-[#071938] transition-colors">Services</Link>
             </div>
           </div>
 

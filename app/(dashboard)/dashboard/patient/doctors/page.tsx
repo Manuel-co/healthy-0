@@ -5,13 +5,14 @@ import { useRequireRole } from "@/hooks/useRequireRole";
 import { getVerifiedDoctors } from "@/lib/doctors-data";
 import { getAssignmentsForPatient, requestAssignment } from "@/lib/assignments";
 import { DoctorList } from "@/components/dashboard/DoctorList";
+import { IntakeForm } from "@/components/dashboard/IntakeForm";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Assignment, Doctor } from "@/lib/types";
+import type { Assignment, Doctor, Patient } from "@/lib/types";
 
 const ALL = "__all__";
 

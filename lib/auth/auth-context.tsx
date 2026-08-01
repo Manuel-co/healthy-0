@@ -6,8 +6,6 @@ import {
   findUserByEmail,
   findUserById,
 } from "@/lib/auth/mock-db";
-import { pickFallbackDoctor } from "@/lib/doctors-data";
-import { createAssignment } from "@/lib/assignments";
 import { createDefaultSubscription } from "@/lib/plans";
 import type { Doctor, KycInfo, Patient, User } from "@/lib/types";
 
@@ -86,14 +84,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       verificationStatus: "pending",
       rejectionReason: null,
       subscription: createDefaultSubscription(),
+      intake: null,
     };
     createUser(patient);
-    // Discovery/request is patient-led (see the doctor directory); this is only
-    // a safety net so nobody is left without a doctor if they skip that step.
-    const fallbackDoctor = await pickFallbackDoctor();
-    if (fallbackDoctor) {
-      await createAssignment(patient.id, fallbackDoctor.id, "active");
-    }
+    // No auto-assignment here — a new patient intentionally starts with no
+    // doctor. Getting matched now happens through the intake-driven find-a-
+    // doctor flow (lib/matching.ts), not a signup-time fallback.
     startSession(patient);
     return patient;
   }

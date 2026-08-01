@@ -1,11 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { useInView } from "../lib/useInView";
 
 const links = {
-  Company: ["About Us", "Our Team", "Careers", "Press"],
-  Services: ["Individual Therapy", "Couples Counselling", "Online Sessions", "Mental Wellness"],
-  Support: ["Help Centre", "Contact Us", "Privacy Policy", "Terms of Service"],
+  Company: [
+    { label: "About Us", href: "/#about" },
+    { label: "Our Team", href: "#" },
+    { label: "Careers", href: "/careers" },
+    // { label: "Press", href: "#" },
+  ],
+  Services: [
+    { label: "Individual Therapy", href: "#" },
+    { label: "Couples Counselling", href: "#" },
+    { label: "Online Sessions", href: "#" },
+    { label: "Mental Wellness", href: "#" },
+  ],
+  Support: [
+    // { label: "Help Centre", href: "/help-centre" },
+    { label: "Contact Us", href: "/contact-us" },
+    { label: "Privacy Policy", href: "/privacy-policy" },
+    { label: "Terms of Service", href: "/terms-of-service" },
+  ],
 };
 
 export default function Footer() {
@@ -26,7 +42,6 @@ export default function Footer() {
   return (
     <div className="bg-[#fffef8] px-3 pb-3 sm:px-4 sm:pb-4 lg:px-5 lg:pb-5">
       <div className="w-full rounded-[20px] lg:rounded-[28px] overflow-hidden bg-[#071938]">
-
         {/* ── CTA band ── */}
         <div
           ref={ctaRef}
@@ -39,14 +54,17 @@ export default function Footer() {
             >
               Ready to see a
               <br />
-              <em className="not-italic italic text-[#e7f1a8]">doctor today?</em>
+              <em className="not-italic italic text-[#e7f1a8]">
+                doctor today?
+              </em>
             </h2>
+
             <p
               className="text-[12.5px] text-white/40 max-w-[380px] leading-[1.7]"
               style={fadeUp(ctaInView, 120)}
             >
-              Join over 12,000 people who get quality healthcare with zero boundaries, zero
-              limitations, and zero stigmatization.
+              Join over 12,000 people who get quality healthcare with zero
+              boundaries, zero limitations, and zero stigmatization.
             </p>
           </div>
 
@@ -54,15 +72,22 @@ export default function Footer() {
             className="flex items-center gap-3 flex-shrink-0"
             style={fadeUp(ctaInView, 220)}
           >
-            <button className="bg-[#0040b2] text-[#fffef8] px-6 py-3 rounded-full text-[13px] font-medium hover:bg-[#1a56c9] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer">
+            <Link
+              href="/signup"
+              className="bg-[#0040b2] text-[#fffef8] px-6 py-3 rounded-full text-[13px] font-medium hover:bg-[#1a56c9] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer"
+            >
               Get started — ₦1,500/m
-            </button>
-            <button className="flex items-center gap-2 text-[13px] text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer group">
+            </Link>
+
+            <Link
+              href="/#about"
+              className="flex items-center gap-2 text-[13px] text-white/60 hover:text-white transition-colors bg-transparent border-none cursor-pointer group"
+            >
               Learn more
               <span className="w-7 h-7 border border-white/20 rounded-full flex items-center justify-center text-xs group-hover:translate-x-1 transition-transform">
                 →
               </span>
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -72,21 +97,37 @@ export default function Footer() {
           className="px-6 py-10 md:px-10 md:py-12 grid grid-cols-2 md:grid-cols-4 gap-8"
         >
           {/* Brand column */}
-          <div className="col-span-2 md:col-span-1" style={fadeUp(linksInView, 0)}>
-            <div className="flex items-center gap-2 mb-4">
-              <img src="/logo.png" alt="" className="w-[26px] h-[26px] object-contain" />
-              <p className="text-[15px] font-medium text-white tracking-tight">HealthyZero</p>
-            </div>
+          <div
+            className="col-span-2 md:col-span-1"
+            style={fadeUp(linksInView, 0)}
+          >
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <img
+                src="/logo.png"
+                alt="HealthyZero"
+                className="w-[26px] h-[26px] object-contain"
+              />
+              <p className="text-[15px] font-medium text-white tracking-tight">
+                HealthyZero
+              </p>
+            </Link>
+
             <p className="text-[11.5px] text-white/35 leading-[1.7] max-w-[200px] mb-5">
               Accessible healthcare for everyone, wherever you are.
             </p>
+
             {/* Socials */}
             <div className="flex items-center gap-2">
               {[
                 {
                   label: "Twitter",
                   icon: (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.74l7.73-8.835L1.254 2.25H8.08l4.265 5.638 5.9-5.638zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
                   ),
@@ -94,17 +135,35 @@ export default function Footer() {
                 {
                   label: "Instagram",
                   icon: (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <rect x="2" y="2" width="20" height="20" rx="5" />
                       <circle cx="12" cy="12" r="4" />
-                      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                      <circle
+                        cx="17.5"
+                        cy="6.5"
+                        r="1"
+                        fill="currentColor"
+                        stroke="none"
+                      />
                     </svg>
                   ),
                 },
                 {
                   label: "LinkedIn",
                   icon: (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
                       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z" />
                       <circle cx="4" cy="4" r="2" />
                     </svg>
@@ -126,20 +185,29 @@ export default function Footer() {
 
           {/* Link columns — stagger per column */}
           {Object.entries(links).map(([heading, items], colIdx) => (
-            <div key={heading} style={fadeUp(linksInView, 100 + colIdx * 100)}>
-              <p className="text-[11px] tracking-[0.12em] uppercase text-white/30 mb-4">{heading}</p>
+            <div
+              key={heading}
+              style={fadeUp(linksInView, 100 + colIdx * 100)}
+            >
+              <p className="text-[11px] tracking-[0.12em] uppercase text-white/30 mb-4">
+                {heading}
+              </p>
+
               <ul className="space-y-2.5">
                 {items.map((item, itemIdx) => (
                   <li
-                    key={item}
-                    style={fadeIn(linksInView, 200 + colIdx * 100 + itemIdx * 50)}
+                    key={item.label}
+                    style={fadeIn(
+                      linksInView,
+                      200 + colIdx * 100 + itemIdx * 50
+                    )}
                   >
-                    <a
-                      href="#"
+                    <Link
+                      href={item.href}
                       className="text-[12px] text-white/50 hover:text-white hover:translate-x-0.5 transition-all duration-300 inline-block"
                     >
-                      {item}
-                    </a>
+                      {item.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -156,9 +224,11 @@ export default function Footer() {
             src="/Healthy0 Logo 1-08.svg"
             alt="HealthyZero"
             className="w-full max-w-[420px] sm:max-w-[620px] md:max-w-[820px] lg:max-w-[960px] h-auto"
-            // style={{ filter: "brightness(0) invert(1)" }}
           />
-          <p className="text-[11px] text-white/25 mt-4 tracking-wide">Zero barriers to healthcare</p>
+
+          <p className="text-[11px] text-white/25 mt-4 tracking-wide">
+            Zero barriers to healthcare
+          </p>
         </div>
 
         {/* ── Bottom bar ── */}
@@ -166,20 +236,33 @@ export default function Footer() {
           className="px-6 py-5 md:px-10 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3"
           style={fadeIn(linksInView, 500)}
         >
-          <p className="text-[11px] text-white/25">© 2026 HealthyZero. All rights reserved.</p>
+          <p className="text-[11px] text-white/25">
+            © 2026 HealthyZero. All rights reserved.
+          </p>
+
           <div className="flex items-center gap-5">
-            {["Privacy", "Terms", "Cookies"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                className="text-[11px] text-white/25 hover:text-white/60 transition-colors"
-              >
-                {item}
-              </a>
-            ))}
+            <Link
+              href="/privacy-policy"
+              className="text-[11px] text-white/25 hover:text-white/60 transition-colors"
+            >
+              Privacy
+            </Link>
+
+            <a
+              href="/terms-of-service"
+              className="text-[11px] text-white/25 hover:text-white/60 transition-colors"
+            >
+              Terms
+            </a>
+
+            <a
+              href="#"
+              className="text-[11px] text-white/25 hover:text-white/60 transition-colors"
+            >
+              Cookies
+            </a>
           </div>
         </div>
-
       </div>
     </div>
   );

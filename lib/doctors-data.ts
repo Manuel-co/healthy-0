@@ -35,21 +35,3 @@ export async function getRequestedAssignmentsForDoctor(doctorId: string): Promis
     return patient ? [{ assignment, patient }] : [];
   });
 }
-
-/**
- * Fallback assignment used only when a patient completes onboarding without
- * requesting a doctor themselves (see the patient-led discovery/request flow).
- * Only considers verified, non-banned doctors, and picks whoever currently
- * has the fewest active patients.
- */
-export async function pickFallbackDoctor(): Promise<Doctor | undefined> {
-  const doctors = await getVerifiedDoctors();
-  if (doctors.length === 0) return undefined;
-  const withCounts = await Promise.all(
-    doctors.map(async (doctor) => ({
-      doctor,
-      count: (await getAssignmentsForDoctor(doctor.id, "active")).length,
-    }))
-  );
-  return withCounts.sort((a, b) => a.count - b.count)[0]?.doctor;
-}

@@ -7,7 +7,7 @@ const SEED_VERSION_KEY = "hz_users_seed_version";
 // Bump this whenever seedUsers()'s shape changes, so stale localStorage data
 // from an earlier session (missing newer User fields) gets replaced instead
 // of silently drifting out of sync with the current types.
-const SEED_VERSION = "6";
+const SEED_VERSION = "7";
 
 function seedUsers(): User[] {
   return [
@@ -64,6 +64,12 @@ function seedUsers(): User[] {
       verificationStatus: "verified",
       rejectionReason: null,
       subscription: { tier: "basic", cycleStartDate: "2026-01-15T09:00:00.000Z", status: "active" },
+      intake: {
+        focusAreas: ["Anxiety", "Sleep"],
+        preferredLanguage: "English",
+        urgency: "medium",
+        completedAt: "2026-01-15T09:00:00.000Z",
+      },
     },
     {
       id: "patient-2",
@@ -78,6 +84,12 @@ function seedUsers(): User[] {
       verificationStatus: "pending",
       rejectionReason: null,
       subscription: { tier: "pro", cycleStartDate: "2026-01-18T09:00:00.000Z", status: "active" },
+      intake: {
+        focusAreas: ["Depression"],
+        preferredLanguage: "English",
+        urgency: "low",
+        completedAt: "2026-01-18T09:00:00.000Z",
+      },
     },
     {
       id: "admin-1",
@@ -95,12 +107,28 @@ function defaultSubscription(): Subscription {
   return { tier: "basic", cycleStartDate: new Date().toISOString(), status: "active" };
 }
 
+/** Fields a Patient record might be missing if it was created before that field existed. */
+function backfillPatient(u: Patient): { patient: Patient; changed: boolean } {
+  let changed = false;
+  let patient = u;
+  if (!patient.subscription) {
+    changed = true;
+    patient = { ...patient, subscription: defaultSubscription() };
+  }
+  if (patient.intake === undefined) {
+    changed = true;
+    patient = { ...patient, intake: null };
+  }
+  return { patient, changed };
+}
+
 /**
  * A version bump only replaces the fixed seed users — a real account created
- * before a field existed (e.g. a patient signed up before `subscription` was
- * added) survives every reseed untouched, since reseeding is all-or-nothing
- * at the array level, not per-record. This repairs any such record in place
- * so the rest of the app never has to defend against a missing field.
+ * before a field existed (e.g. a patient signed up before `subscription` or
+ * `intake` was added) survives every reseed untouched, since reseeding is
+ * all-or-nothing at the array level, not per-record. This repairs any such
+ * record in place so the rest of the app never has to defend against a
+ * missing field.
  */
 export function getUsers(): User[] {
   if (typeof window === "undefined") return [];
@@ -115,11 +143,10 @@ export function getUsers(): User[] {
 
   let backfilled = false;
   const users = (JSON.parse(raw) as User[]).map((u): User => {
-    if (u.role === "patient" && !u.subscription) {
-      backfilled = true;
-      return { ...u, subscription: defaultSubscription() };
-    }
-    return u;
+    if (u.role !== "patient") return u;
+    const { patient, changed } = backfillPatient(u);
+    if (changed) backfilled = true;
+    return patient;
   });
   if (backfilled) saveUsers(users);
   return users;

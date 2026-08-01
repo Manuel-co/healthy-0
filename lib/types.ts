@@ -34,6 +34,21 @@ export interface Subscription {
   status: SubscriptionStatus;
 }
 
+export type UrgencyLevel = "low" | "medium" | "high";
+
+/**
+ * The find-a-doctor intake — drives lib/matching.ts. focusAreas draws from
+ * the controlled vocabulary in lib/focus-areas.ts so it's directly
+ * comparable to Doctor.focusAreas. null on the Patient until they've
+ * completed it at least once.
+ */
+export interface Intake {
+  focusAreas: string[];
+  preferredLanguage: string | null;
+  urgency: UrgencyLevel | null;
+  completedAt: string;
+}
+
 export interface Patient extends BaseUser {
   role: "patient";
   dob: string;
@@ -42,6 +57,7 @@ export interface Patient extends BaseUser {
   verificationStatus: VerificationStatus;
   rejectionReason: string | null;
   subscription: Subscription;
+  intake: Intake | null;
 }
 
 export interface Doctor extends BaseUser {
