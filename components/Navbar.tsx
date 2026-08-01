@@ -15,15 +15,14 @@ export default function Navbar() {
         {/* Main bar */}
         <div className="flex items-center justify-between px-5 py-4 md:px-8 md:py-5 lg:px-10">
           {/* Logo */}
-         {/* Logo */}
-<Link href="/" className="flex items-center gap-2.5 text-[15px] font-medium tracking-tight text-[#071938]">
-  <img
-    src="/Healthy0-Logo 2.svg"
-    alt="HealthyZero"
-    className="w-[34px] h-[34px] object-contain"
-  />
-  HealthyZero
-</Link>
+          <Link href="/" className="flex items-center gap-2.5 text-[15px] font-medium tracking-tight text-[#071938]">
+            <img
+              src="/Healthy0-Logo 2.svg"
+              alt="HealthyZero"
+              className="w-[34px] h-[34px] object-contain"
+            />
+            HealthyZero
+          </Link>
 
           {/* Center — hidden on mobile, visible md+ */}
           <div className="hidden md:flex items-center gap-6 lg:gap-7 absolute left-1/2 -translate-x-1/2">

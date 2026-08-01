@@ -9,6 +9,7 @@ import { getSessionsForDoctor, startSession } from "@/lib/sessions-data";
 import { getLastMessage, getUnreadCountForSession, messagePreviewText } from "@/lib/messaging";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
 import { ConversationListItem } from "@/components/messaging/ConversationListItem";
+import { InboxLayout } from "@/components/messaging/InboxLayout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Doctor, Message, Patient, Session } from "@/lib/types";
@@ -117,6 +118,7 @@ export default function DoctorMessagesPage() {
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search patients"
+          aria-label="Search patients"
           className="pl-8"
         />
       </div>
@@ -172,50 +174,33 @@ export default function DoctorMessagesPage() {
     <div className="space-y-4">
       <h1 className="font-heading text-2xl font-extrabold text-[#071938]">Messages</h1>
 
-      {/* Mobile: list, or full-screen chat once a session is selected */}
-      <div className="h-[75vh] md:hidden">
-        {selected ? (
-          selected.patient.verificationStatus === "verified" ? (
-            <ChatWindow
-              sessionId={selected.session.id}
-              currentUserId={doctor.id}
-              otherPartyName={selected.patient.name}
-              onBack={() => setSelectedSessionId(null)}
-              onRead={refresh}
-              onBookNext={() => handleBookNext(selected.patient.id)}
-            />
-          ) : (
-            <PendingPatientNotice name={selected.patient.name} />
-          )
-        ) : (
-          <div className="h-full rounded-xl border border-border bg-white">{list}</div>
-        )}
-      </div>
-
-      {/* Desktop: two-pane inbox */}
-      <div className="hidden h-[75vh] gap-4 md:flex">
-        <div className="w-80 shrink-0 rounded-xl border border-border bg-white">{list}</div>
-        <div className="flex-1">
-          {selected ? (
+      <InboxLayout
+        list={list}
+        hasSelection={!!selected}
+        onDeselect={() => setSelectedSessionId(null)}
+        renderDetail={(onBack) =>
+          selected ? (
             selected.patient.verificationStatus === "verified" ? (
               <ChatWindow
                 sessionId={selected.session.id}
                 currentUserId={doctor.id}
                 otherPartyName={selected.patient.name}
+                onBack={onBack}
                 onRead={refresh}
                 onBookNext={() => handleBookNext(selected.patient.id)}
               />
             ) : (
               <PendingPatientNotice name={selected.patient.name} />
             )
-          ) : (
-            <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-border bg-white text-center">
-              <MessageSquare className="size-8 text-[#071938]/30" />
-              <p className="text-sm text-muted-foreground">Select a session to start reading.</p>
-            </div>
-          )}
-        </div>
-      </div>
+          ) : null
+        }
+        emptyState={
+          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-border bg-white text-center">
+            <MessageSquare className="size-8 text-[#071938]/30" />
+            <p className="text-sm text-muted-foreground">Select a session to start reading.</p>
+          </div>
+        }
+      />
     </div>
   );
 }

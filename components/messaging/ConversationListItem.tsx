@@ -34,6 +34,7 @@ export function ConversationListItem({
       aria-current={isActive ? "true" : undefined}
       className={cn(
         "flex w-full items-center gap-3 border-b border-border px-4 py-3 text-left transition-colors last:border-b-0",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#071938]/40",
         isActive ? "bg-[#071938]/[0.06]" : "hover:bg-[#071938]/5"
       )}
     >

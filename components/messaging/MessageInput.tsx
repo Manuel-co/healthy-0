@@ -107,6 +107,7 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
           variant="ghost"
           size="icon"
           title={canShareImages ? "Attach an image" : "Upgrade to share images"}
+          aria-label={canShareImages ? "Attach an image" : "Upgrade to share images"}
           onClick={() => handleAttachClick("image", canShareImages, imageInputRef)}
         >
           <ImageIcon className="size-4" />
@@ -116,6 +117,7 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
           variant="ghost"
           size="icon"
           title={canShareDocuments ? "Attach a document" : "Upgrade to share documents"}
+          aria-label={canShareDocuments ? "Attach a document" : "Upgrade to share documents"}
           onClick={() => handleAttachClick("document", canShareDocuments, documentInputRef)}
         >
           <FileText className="size-4" />
@@ -130,10 +132,11 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
             }
           }}
           placeholder="Type a message..."
+          aria-label="Message"
           className="min-h-10 resize-none"
           rows={1}
         />
-        <Button type="submit" size="icon" disabled={!text.trim() && !attachment}>
+        <Button type="submit" size="icon" aria-label="Send message" disabled={!text.trim() && !attachment}>
           <SendHorizonal className="size-4" />
         </Button>
       </div>

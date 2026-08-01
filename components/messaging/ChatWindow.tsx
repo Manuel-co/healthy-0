@@ -174,7 +174,7 @@ export function ChatWindow({
           <VideoCallDialog
             otherPartyName={otherPartyName}
             trigger={
-              <Button variant="ghost" size="icon" title="Start video call">
+              <Button variant="ghost" size="icon" title="Start video call" aria-label="Start video call">
                 <Video className="size-4" />
               </Button>
             }

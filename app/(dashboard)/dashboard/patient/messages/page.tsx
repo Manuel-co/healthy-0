@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { Search, MessageSquare } from "lucide-react";
 import { useRequireRole } from "@/hooks/useRequireRole";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { getDoctorForPatient } from "@/lib/patients-data";
 import { getDoctorById } from "@/lib/doctors-data";
 import {
@@ -13,31 +15,20 @@ import {
   canJoinSession,
   cancelSession,
 } from "@/lib/sessions-data";
+import { getEntitlements, sessionsRemaining } from "@/lib/plans";
 import { ChatWindow } from "@/components/messaging/ChatWindow";
-import { SessionStatusBadge } from "@/components/dashboard/SessionStatusBadge";
+import { InboxLayout } from "@/components/messaging/InboxLayout";
+import { SessionListItem } from "@/components/messaging/SessionListItem";
+import { OutOfSessionsNotice } from "@/components/dashboard/OutOfSessionsNotice";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { OutOfSessionsNotice } from "@/components/dashboard/OutOfSessionsNotice";
-import { getEntitlements, sessionsRemaining } from "@/lib/plans";
-import { cn, formatSessionDate, formatSessionDuration } from "@/lib/utils";
 import type { Doctor, Patient, Session } from "@/lib/types";
 
-function MessagesSkeleton() {
-  return (
-    <div className="space-y-4">
-      <Skeleton className="h-7 w-32" />
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-4 w-48" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-8 w-28" />
-        </CardContent>
-      </Card>
-    </div>
-  );
+interface SessionRow {
+  session: Session;
+  doctor: Doctor;
 }
 
 export default function PatientMessagesPage() {
@@ -53,6 +44,8 @@ export default function PatientMessagesPage() {
   const [startError, setStartError] = useState<string | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [sessionsLeft, setSessionsLeft] = useState<number | null>(null);
+  const [searchInput, setSearchInput] = useState("");
+  const debouncedSearch = useDebouncedValue(searchInput, 250);
 
   async function loadSessions(patientId: string, doctorId: string) {
     const [historyList, next] = await Promise.all([
@@ -128,6 +121,21 @@ export default function PatientMessagesPage() {
     setCancelling(false);
   }
 
+  const rows: SessionRow[] = useMemo(() => {
+    const activeRow: SessionRow[] = nextSession?.status === "active" && doctor ? [{ session: nextSession, doctor }] : [];
+    const historyRows: SessionRow[] = history.flatMap((s) => {
+      const d = historyDoctors[s.doctorId];
+      return d ? [{ session: s, doctor: d }] : [];
+    });
+    return [...activeRow, ...historyRows];
+  }, [nextSession, doctor, history, historyDoctors]);
+
+  const filteredRows = useMemo(() => {
+    const query = debouncedSearch.trim().toLowerCase();
+    if (!query) return rows;
+    return rows.filter((r) => r.doctor.name.toLowerCase().includes(query));
+  }, [rows, debouncedSearch]);
+
   if (loading || !user) return null;
   const patient = user as Patient;
 
@@ -142,7 +150,23 @@ export default function PatientMessagesPage() {
     );
   }
 
-  if (dataLoading) return <MessagesSkeleton />;
+  if (dataLoading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-7 w-32" />
+        <div className="flex h-[75vh] gap-4">
+          <div className="w-full shrink-0 space-y-3 rounded-xl border border-border bg-white p-3 md:w-80">
+            <Skeleton className="h-24 w-full rounded-lg" />
+            <Skeleton className="h-9 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+            <Skeleton className="h-14 w-full" />
+          </div>
+          <div className="hidden flex-1 rounded-xl border border-border bg-white md:block" />
+        </div>
+      </div>
+    );
+  }
 
   if (!doctor) {
     return (
@@ -158,113 +182,128 @@ export default function PatientMessagesPage() {
     );
   }
 
-  // The session being viewed might be a past one with a DIFFERENT doctor
-  // than the patient's current one, if they switched at some point.
-  const viewingSession =
-    history.find((s) => s.id === viewingSessionId) ?? (nextSession?.id === viewingSessionId ? nextSession : null);
-  const viewingDoctor = (viewingSession && historyDoctors[viewingSession.doctorId]) ?? doctor;
+  const entitlements = getEntitlements(patient);
+
+  const topAction =
+    nextSession?.status === "scheduled" ? (
+      <Card className="border-none bg-[#f2f1e8] shadow-none">
+        <CardHeader className="p-3 pb-0">
+          <CardTitle className="text-sm">Upcoming session</CardTitle>
+          <CardDescription className="text-xs">
+            {nextSession.scheduledFor &&
+              new Date(nextSession.scheduledFor).toLocaleString([], {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+            with {doctor.name}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 p-3 pt-2">
+          {startError && <p className="text-xs text-destructive">{startError}</p>}
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" disabled={joining || cancelling || !canJoinSession(nextSession)} onClick={handleJoin}>
+              {joining ? "Joining..." : canJoinSession(nextSession) ? "Join session" : "Not yet time"}
+            </Button>
+            <Button size="sm" variant="outline" disabled={joining || cancelling} onClick={handleCancel}>
+              {cancelling ? "Cancelling..." : "Cancel"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    ) : nextSession?.status === "active" ? (
+      <Card className="border-none bg-[#f2f1e8] shadow-none">
+        <CardContent className="p-3 text-sm text-[#071938]">Live now with {doctor.name}.</CardContent>
+      </Card>
+    ) : sessionsLeft === 0 ? (
+      <Card className="border-none bg-[#f2f1e8] shadow-none">
+        <CardContent className="p-3">
+          <OutOfSessionsNotice />
+        </CardContent>
+      </Card>
+    ) : (
+      <Card className="border-none bg-[#f2f1e8] shadow-none">
+        <CardHeader className="p-3 pb-0">
+          <CardTitle className="text-sm">Start a session</CardTitle>
+          <CardDescription className="text-xs">
+            Begins a {entitlements.sessionLengthMins}-minute chat window with {doctor.name}.
+            {sessionsLeft !== null && ` ${sessionsLeft} of ${entitlements.sessionsPerMonth} left this month.`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 p-3 pt-2">
+          {startError && <p className="text-xs text-destructive">{startError}</p>}
+          <Button size="sm" disabled={starting} onClick={handleStartSession}>
+            {starting ? "Starting..." : "Start session"}
+          </Button>
+        </CardContent>
+      </Card>
+    );
+
+  const list = (
+    <div className="flex h-full flex-col overflow-hidden">
+      <div className="space-y-3 border-b border-border p-3">
+        {topAction}
+        <div className="relative">
+          <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search history"
+            aria-label="Search session history"
+            className="pl-8"
+          />
+        </div>
+      </div>
+      <div className="flex-1 overflow-y-auto">
+        {filteredRows.length === 0 ? (
+          <p className="p-4 text-center text-sm text-muted-foreground">
+            {rows.length === 0 ? "No sessions yet." : "No sessions match your search."}
+          </p>
+        ) : (
+          filteredRows.map((r) => (
+            <SessionListItem
+              key={r.session.id}
+              session={r.session}
+              doctorName={r.doctor.name}
+              isActive={viewingSessionId === r.session.id}
+              onClick={() => setViewingSessionId(r.session.id)}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  );
+
+  const viewingRow = rows.find((r) => r.session.id === viewingSessionId) ?? null;
 
   return (
     <div className="space-y-4">
       <h1 className="font-heading text-2xl font-extrabold text-[#071938]">Messages</h1>
 
-      {viewingSessionId ? (
-        <div className="space-y-2">
-          {startError && <p className="text-sm text-destructive">{startError}</p>}
-          <div className="h-[75vh]">
+      <InboxLayout
+        list={list}
+        hasSelection={!!viewingRow}
+        onDeselect={() => setViewingSessionId(null)}
+        renderDetail={(onBack) =>
+          viewingRow ? (
             <ChatWindow
-              sessionId={viewingSessionId}
+              sessionId={viewingRow.session.id}
               currentUserId={patient.id}
-              otherPartyName={viewingDoctor.name}
-              otherPartyAvatarUrl={viewingDoctor.profileImageUrl}
-              onBack={() => setViewingSessionId(null)}
+              otherPartyName={viewingRow.doctor.name}
+              otherPartyAvatarUrl={viewingRow.doctor.profileImageUrl}
+              onBack={onBack}
               onBookNext={handleStartSession}
             />
+          ) : null
+        }
+        emptyState={
+          <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-border bg-white text-center">
+            <MessageSquare className="size-8 text-[#071938]/30" />
+            <p className="text-sm text-muted-foreground">Select a session to read.</p>
           </div>
-        </div>
-      ) : nextSession?.status === "scheduled" ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Upcoming session</CardTitle>
-            <CardDescription>
-              {nextSession.scheduledFor &&
-                new Date(nextSession.scheduledFor).toLocaleString([], {
-                  month: "short",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}{" "}
-              with {doctor.name}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {startError && <p className="text-sm text-destructive">{startError}</p>}
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" disabled={joining || cancelling || !canJoinSession(nextSession)} onClick={handleJoin}>
-                {joining ? "Joining..." : canJoinSession(nextSession) ? "Join session" : "Not yet time to join"}
-              </Button>
-              <Button size="sm" variant="outline" disabled={joining || cancelling} onClick={handleCancel}>
-                {cancelling ? "Cancelling..." : "Cancel"}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      ) : sessionsLeft === 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Start a session</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <OutOfSessionsNotice />
-          </CardContent>
-        </Card>
-      ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Start a session</CardTitle>
-            <CardDescription>
-              Begins a {getEntitlements(patient).sessionLengthMins}-minute chat window with {doctor.name}.
-              {sessionsLeft !== null && ` ${sessionsLeft} of ${getEntitlements(patient).sessionsPerMonth} sessions left this month.`}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {startError && <p className="text-sm text-destructive">{startError}</p>}
-            <Button size="sm" disabled={starting} onClick={handleStartSession}>
-              {starting ? "Starting..." : "Start session"}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Session history</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
-          {history.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No past sessions yet.</p>
-          ) : (
-            history.map((s) => (
-              <button
-                key={s.id}
-                type="button"
-                onClick={() => setViewingSessionId(s.id)}
-                className={cn(
-                  "flex w-full flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-left text-sm transition-colors hover:bg-[#071938]/5",
-                  viewingSessionId === s.id && "bg-[#071938]/[0.06]"
-                )}
-              >
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  <span className="text-[#071938]">{formatSessionDate(s.endedAt, s.scheduledFor, s.startedAt)}</span>
-                  <span className="text-xs text-muted-foreground">{historyDoctors[s.doctorId]?.name ?? "Doctor"}</span>
-                  <span className="text-xs text-muted-foreground">{formatSessionDuration(s.startedAt, s.endedAt)}</span>
-                </div>
-                <SessionStatusBadge status={s.status} />
-              </button>
-            ))
-          )}
-        </CardContent>
-      </Card>
+        }
+      />
     </div>
   );
 }
