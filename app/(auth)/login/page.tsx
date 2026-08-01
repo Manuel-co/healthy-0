@@ -1,35 +1,42 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { useAuth } from "@/lib/auth/auth-context";
 import { dashboardPathFor } from "@/lib/routes";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
+
+const LoginSchema = Yup.object({
+  email: Yup.string().trim().email("Enter a valid email address.").required("Email is required."),
+  password: Yup.string().required("Password is required."),
+});
 
 export default function LoginPage() {
   const { logIn } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setSubmitting(true);
-    try {
-      const user = await logIn(email, password);
-      router.push(dashboardPathFor(user.role));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-      setSubmitting(false);
-    }
-  }
+  const formik = useFormik({
+    initialValues: { email: "", password: "" },
+    validationSchema: LoginSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setError(null);
+      try {
+        const user = await logIn(values.email, values.password);
+        router.push(dashboardPathFor(user.role));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <Card>
@@ -38,24 +45,39 @@ export default function LoginPage() {
         <CardDescription>Welcome back to HealthyZero.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={formik.handleSubmit} noValidate className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={!!(formik.touched.email && formik.errors.email)}
+            />
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-sm text-destructive">{formik.errors.email}</p>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="password">Password</Label>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={!!(formik.touched.password && formik.errors.password)}
             />
+            {formik.touched.password && formik.errors.password && (
+              <p className="text-sm text-destructive">{formik.errors.password}</p>
+            )}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Logging in..." : "Log in"}
+          <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+            {formik.isSubmitting ? "Logging in..." : "Log in"}
           </Button>
         </form>
         <p className="text-center text-sm text-[#071938]/60 mt-4">

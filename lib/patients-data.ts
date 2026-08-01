@@ -1,6 +1,6 @@
 import { getUsers, updateUser } from "@/lib/auth/mock-db";
 import { getActiveAssignmentForPatient } from "@/lib/assignments";
-import type { Doctor, Intake, Patient, UrgencyLevel } from "@/lib/types";
+import type { Doctor, Intake, Patient, UnmatchedFlag, UrgencyLevel } from "@/lib/types";
 
 export async function getAllPatients(): Promise<Patient[]> {
   return getUsers().filter((u): u is Patient => u.role === "patient");
@@ -57,4 +57,9 @@ export async function saveIntake(patientId: string, input: IntakeFormInput): Pro
   const patient = await getPatientById(patientId);
   if (!patient) throw new Error("Patient not found.");
   return patient;
+}
+
+/** Set/clear the Phase 5 no-focus-match admin-review flag — see UnmatchedFlag. */
+export async function setUnmatchedFlag(patientId: string, flag: UnmatchedFlag | null): Promise<void> {
+  updateUser(patientId, { unmatchedFlag: flag });
 }

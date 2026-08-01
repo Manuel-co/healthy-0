@@ -70,6 +70,7 @@ function seedUsers(): User[] {
         urgency: "medium",
         completedAt: "2026-01-15T09:00:00.000Z",
       },
+      unmatchedFlag: null,
     },
     {
       id: "patient-2",
@@ -90,6 +91,7 @@ function seedUsers(): User[] {
         urgency: "low",
         completedAt: "2026-01-18T09:00:00.000Z",
       },
+      unmatchedFlag: null,
     },
     {
       id: "admin-1",
@@ -118,6 +120,10 @@ function backfillPatient(u: Patient): { patient: Patient; changed: boolean } {
   if (patient.intake === undefined) {
     changed = true;
     patient = { ...patient, intake: null };
+  }
+  if (patient.unmatchedFlag === undefined) {
+    changed = true;
+    patient = { ...patient, unmatchedFlag: null };
   }
   return { patient, changed };
 }

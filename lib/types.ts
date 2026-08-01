@@ -49,6 +49,17 @@ export interface Intake {
   completedAt: string;
 }
 
+/**
+ * Set when Phase 5's no-focus-match fallback fires — a Basic patient was
+ * auto-assigned to the least-loaded doctor despite zero focus-area overlap.
+ * Surfaced to admins (patient detail + list) instead of failing silently.
+ * Cleared automatically the next time matching finds a genuine overlap.
+ */
+export interface UnmatchedFlag {
+  reason: string;
+  flaggedAt: string;
+}
+
 export interface Patient extends BaseUser {
   role: "patient";
   dob: string;
@@ -58,6 +69,7 @@ export interface Patient extends BaseUser {
   rejectionReason: string | null;
   subscription: Subscription;
   intake: Intake | null;
+  unmatchedFlag: UnmatchedFlag | null;
 }
 
 export interface Doctor extends BaseUser {

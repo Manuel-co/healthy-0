@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { DoctorAvatar } from "@/components/dashboard/DoctorAvatar";
 import { SortableTableHead } from "@/components/dashboard/SortableTableHead";
@@ -17,6 +18,9 @@ interface DoctorListProps {
   variant?: "admin" | "directory";
   /** Directory variant only — e.g. a Request/Requested button per row. */
   renderAction?: (doctor: Doctor) => ReactNode;
+  /** Directory variant only — overlapping focus areas per doctor id, from lib/matching.ts's
+   *  matchReason. Renders a "Matches: ..." line under the doctor's focus areas when present. */
+  matchReasons?: Record<string, string[]>;
   /** Admin variant only — makes Name/Patients/Status headers clickable sort toggles. */
   sortBy?: string;
   sortDir?: "asc" | "desc";
@@ -29,6 +33,7 @@ export function DoctorList({
   patientCounts,
   variant = "admin",
   renderAction,
+  matchReasons,
   sortBy,
   sortDir,
   onSortChange,
@@ -60,7 +65,14 @@ export function DoctorList({
                 </div>
               </TableCell>
               <TableCell className="text-muted-foreground">{doctor.specialty}</TableCell>
-              <TableCell className="text-muted-foreground">{doctor.focusAreas.join(", ") || "—"}</TableCell>
+              <TableCell className="text-muted-foreground">
+                {doctor.focusAreas.join(", ") || "—"}
+                {matchReasons?.[doctor.id] && matchReasons[doctor.id].length > 0 && (
+                  <Badge className="mt-1 block w-fit bg-accent text-accent-foreground">
+                    Matches: {matchReasons[doctor.id].join(", ")}
+                  </Badge>
+                )}
+              </TableCell>
               <TableCell className="text-muted-foreground">{doctor.languages.join(", ") || "—"}</TableCell>
               <TableCell className="text-muted-foreground">{doctor.yearsExperience} yrs</TableCell>
               <TableCell className="text-right">{renderAction?.(doctor)}</TableCell>

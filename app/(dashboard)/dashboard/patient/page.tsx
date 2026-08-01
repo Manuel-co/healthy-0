@@ -260,6 +260,21 @@ export default function PatientDashboardPage() {
             <span className="text-muted-foreground">Reason for care: </span>
             {patient.presentingConcern || <span className="text-[#071938]/40">Not shared yet</span>}
           </p>
+          <p>
+            <span className="text-muted-foreground">Focus areas: </span>
+            {patient.intake?.focusAreas.length ? (
+              patient.intake.focusAreas.join(", ")
+            ) : (
+              <span className="text-[#071938]/40">Not shared yet</span>
+            )}
+          </p>
+          <p>
+            <span className="text-muted-foreground">Preferred language: </span>
+            {patient.intake?.preferredLanguage ?? <span className="text-[#071938]/40">No preference</span>}
+          </p>
+          <Button asChild size="sm" variant="outline" className="mt-2">
+            <Link href="/dashboard/patient/doctors">Update matching info</Link>
+          </Button>
         </CardContent>
       </Card>
     </div>

@@ -40,8 +40,26 @@ export default function AdminPatientDetailPage({
           <p><span className="text-muted-foreground">Email: </span>{patient.email}</p>
           <p><span className="text-muted-foreground">Date of birth: </span>{patient.dob}</p>
           <p><span className="text-muted-foreground">Assigned doctor: </span>{doctor ? doctor.name : "Unassigned"}</p>
+          {patient.intake && (
+            <p>
+              <span className="text-muted-foreground">Focus areas: </span>
+              {patient.intake.focusAreas.join(", ") || "—"}
+            </p>
+          )}
         </CardContent>
       </Card>
+
+      {patient.unmatchedFlag && (
+        <Card className="border-amber-300">
+          <CardHeader>
+            <CardTitle className="text-amber-800">Needs review — no exact match</CardTitle>
+            <CardDescription>
+              Flagged {new Date(patient.unmatchedFlag.flaggedAt).toLocaleString()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-sm text-amber-800">{patient.unmatchedFlag.reason}</CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

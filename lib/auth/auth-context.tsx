@@ -85,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       rejectionReason: null,
       subscription: createDefaultSubscription(),
       intake: null,
+      unmatchedFlag: null,
     };
     createUser(patient);
     // No auto-assignment here — a new patient intentionally starts with no

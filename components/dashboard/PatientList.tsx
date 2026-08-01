@@ -82,6 +82,11 @@ export function PatientList({
                           {unread}
                         </Badge>
                       )}
+                      {patient.unmatchedFlag && (
+                        <Badge variant="destructive" aria-label="Needs review — no exact focus-area match">
+                          Needs review
+                        </Badge>
+                      )}
                     </div>
                   </TableCell>
                   {showEmail && <TableCell className="text-muted-foreground">{patient.email}</TableCell>}
