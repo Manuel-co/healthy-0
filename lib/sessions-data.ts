@@ -228,8 +228,8 @@ export async function scheduleSession(patientId: string, doctorId: string, sched
 }
 
 /**
- * Joins a scheduled session, actually starting its 30-minute window now (not
- * at the originally-booked time — a late join still gets the full window).
+ * Joins a scheduled session, actually starting its (plan-length) window now
+ * (not at the originally-booked time — a late join still gets the full window).
  */
 export async function joinSession(sessionId: string): Promise<Session> {
   const session = await getSessionById(sessionId);

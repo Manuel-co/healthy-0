@@ -13,5 +13,7 @@ export function dashboardPathFor(role: Role): string {
 
 export const LOGIN_PATH = "/login";
 export const SIGNUP_PATH = "/signup";
-// TODO: point at the in-app plan management page once it exists (entitlements Phase 6).
+/** Public marketing pricing section — for logged-out visitors. */
 export const PRICING_PATH = "/#pricing";
+/** In-app plan management — for an already-logged-in patient upgrading/downgrading. */
+export const PLAN_PATH = "/dashboard/patient/plan";

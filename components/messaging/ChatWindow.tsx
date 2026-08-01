@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { ArrowLeft, Clock, FileText, Video } from "lucide-react";
 import { getMessages, sendMessage, markSessionRead } from "@/lib/messaging";
 import { getSessionById, isSessionActive, msRemaining, extendSession } from "@/lib/sessions-data";
 import { getPatientById } from "@/lib/patients-data";
 import { getEntitlements, type PlanConfig } from "@/lib/plans";
+import { PLAN_PATH } from "@/lib/routes";
 import { usePolling } from "@/hooks/usePolling";
 import { MessageInput } from "@/components/messaging/MessageInput";
 import { VideoCallDialog } from "@/components/messaging/VideoCallDialog";
@@ -179,6 +181,14 @@ export function ChatWindow({
           />
         )}
       </div>
+      {warning && session?.patientId === currentUserId && patientEntitlements && patientEntitlements.tier !== "max" && (
+        <div className="flex items-center justify-between gap-2 bg-[#e7f1a8]/40 px-4 py-1.5 text-xs text-[#071938]">
+          <span>Running low on time?</span>
+          <Link href={PLAN_PATH} className="font-medium underline underline-offset-2">
+            Upgrade for longer sessions
+          </Link>
+        </div>
+      )}
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-4">
         {messagesLoading ? (
           [0, 1, 2].map((i) => (

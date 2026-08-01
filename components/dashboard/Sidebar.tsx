@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, MessageSquare, Users, Stethoscope, Search } from "lucide-react";
+import { LayoutDashboard, MessageSquare, Users, Stethoscope, Search, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Role } from "@/lib/types";
 
@@ -17,6 +17,7 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
     { href: "/dashboard/patient", label: "My Dashboard", icon: LayoutDashboard },
     { href: "/dashboard/patient/doctors", label: "Find a Doctor", icon: Search },
     { href: "/dashboard/patient/messages", label: "Messages", icon: MessageSquare },
+    { href: "/dashboard/patient/plan", label: "My Plan", icon: CreditCard },
   ],
   doctor: [
     { href: "/dashboard/doctor", label: "My Patients", icon: Users },

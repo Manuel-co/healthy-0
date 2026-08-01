@@ -18,6 +18,7 @@ import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { SessionStatusBadge } from "@/components/dashboard/SessionStatusBadge";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getEntitlements } from "@/lib/plans";
 import { calculateAge, cn, formatSessionDate, formatSessionDuration } from "@/lib/utils";
 import type { Assignment, Doctor, Patient, Session } from "@/lib/types";
 
@@ -218,7 +219,9 @@ export default function DoctorPatientDetailPage({
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">Start a session</CardTitle>
-                  <CardDescription>Begins a 30-minute chat window with {patient.name}.</CardDescription>
+                  <CardDescription>
+                    Begins a {getEntitlements(patient).sessionLengthMins}-minute chat window with {patient.name}.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   {startError && <p className="text-sm text-destructive">{startError}</p>}

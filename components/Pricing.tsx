@@ -1,56 +1,30 @@
 "use client";
 
 import { useInView } from "../lib/useInView";
+import { PLAN_CONFIG, planFeatures } from "../lib/plans";
+import type { PlanTier } from "../lib/types";
 
-const plans = [
-  {
-    name: "Starter",
-    price: "₦1,500",
-    period: "/mo",
-    desc: "Perfect for getting started with HealthyZero.",
-    features: [
-      "1 session per month",
-      "Text support between sessions",
-      "Access to health resources",
-      "Progress tracking",
-    ],
-    cta: "Get started",
-    highlight: false,
-    bg: "#ffffff",
-  },
-  {
-    name: "Growth",
-    price: "₦5,000",
-    period: "/mo",
-    desc: "Our most popular plan for consistent progress.",
-    features: [
-      "4 sessions per month",
-      "Priority doctor matching",
-      "Unlimited text support",
-      "Progress tracking",
-      "Group workshops",
-    ],
-    cta: "Start free trial",
-    highlight: true,
-    bg: "#071938",
-  },
-  {
-    name: "Premium",
-    price: "₦10,000",
-    period: "/mo",
-    desc: "Comprehensive care for those who want the most.",
-    features: [
-      "Unlimited sessions",
-      "Dedicated doctor",
-      "24/7 crisis support",
-      "Family sessions included",
-      "Personalised care plan",
-    ],
-    cta: "Get started",
-    highlight: false,
-    bg: "#ffffff",
-  },
-];
+// Copy-only, not entitlement data — the features list below is derived from
+// PLAN_CONFIG (lib/plans.ts), the single source of truth, so pricing here
+// and the in-app plan page can never drift on what each tier actually includes.
+const DESCRIPTIONS: Record<PlanTier, string> = {
+  basic: "Perfect for getting started with HealthyZero.",
+  pro: "Our most popular plan for consistent progress.",
+  max: "Comprehensive care for those who want the most.",
+};
+
+const HIGHLIGHTED_TIER: PlanTier = "pro";
+
+const plans = Object.values(PLAN_CONFIG).map((plan) => ({
+  name: plan.name,
+  price: plan.price.amountKobo === null ? "TBA" : `₦${(plan.price.amountKobo / 100).toLocaleString()}`,
+  period: plan.price.amountKobo === null ? "" : "/mo",
+  desc: DESCRIPTIONS[plan.tier],
+  features: planFeatures(plan),
+  cta: plan.tier === HIGHLIGHTED_TIER ? "Start free trial" : "Get started",
+  highlight: plan.tier === HIGHLIGHTED_TIER,
+  bg: plan.tier === HIGHLIGHTED_TIER ? "#071938" : "#ffffff",
+}));
 
 export default function Pricing() {
   const { ref, inView } = useInView(0.1);

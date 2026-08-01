@@ -1,4 +1,6 @@
 import { getSessionsForPatient } from "@/lib/sessions-data";
+import { getPatientById } from "@/lib/patients-data";
+import { updateUser } from "@/lib/auth/mock-db";
 import type { Patient, PlanTier, Subscription } from "@/lib/types";
 
 export interface PlanPrice {
@@ -117,4 +119,46 @@ export async function sessionsRemaining(patient: Patient): Promise<number> {
 
 export async function canStartSession(patient: Patient): Promise<boolean> {
   return (await sessionsRemaining(patient)) > 0;
+}
+
+/**
+ * Mock checkout — no real payment gateway. Takes effect immediately: the new
+ * tier's quota and session length apply right away, with no proration.
+ * cycleStartDate resets to mark when this (new) subscription began; the
+ * monthly quota window itself is calendar-month based regardless (see
+ * currentCycleStart), so this doesn't change how much of the current
+ * month's usage already counts against the new limit.
+ */
+export async function changeSubscriptionTier(patientId: string, tier: PlanTier): Promise<Patient> {
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Patient not found.");
+  const subscription: Subscription = { tier, cycleStartDate: new Date().toISOString(), status: "active" };
+  updateUser(patientId, { subscription });
+  return { ...patient, subscription };
+}
+
+/** basic < pro < max — used to label a plan switch as an upgrade or downgrade. */
+export const PLAN_RANK: Record<PlanTier, number> = { basic: 0, pro: 1, max: 2 };
+
+export function formatPlanPrice(price: PlanPrice): string {
+  if (price.amountKobo === null) return "Pricing TBA";
+  return `₦${(price.amountKobo / 100).toLocaleString()}/mo`;
+}
+
+/**
+ * The plain-English feature list for a tier, derived entirely from
+ * PLAN_CONFIG — used by both the in-app plan page and the public marketing
+ * pricing section so the two can never drift apart.
+ */
+export function planFeatures(plan: PlanConfig): string[] {
+  const features = [
+    `${plan.sessionsPerMonth} sessions/month`,
+    `${plan.sessionLengthMins}-minute sessions`,
+    plan.canChooseDoctor ? "Choose your own doctor" : "Matched with a doctor for you",
+  ];
+  if (plan.canPayToExtend) features.push(`Pay to extend +${plan.extendMins} min when a session runs out`);
+  if (plan.canShareDocuments) features.push("Share documents");
+  if (plan.canShareImages) features.push("Share images");
+  if (plan.canUseVideo) features.push("Video sessions");
+  return features;
 }

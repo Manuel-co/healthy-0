@@ -1,10 +1,12 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import Link from "next/link";
 import { SendHorizonal, Image as ImageIcon, FileText, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { fileToDataUrl } from "@/lib/utils";
+import { PLAN_PATH } from "@/lib/routes";
 import type { MessageAttachment } from "@/lib/types";
 
 const MAX_ATTACHMENT_BYTES = 3_000_000;
@@ -19,6 +21,7 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
   const [text, setText] = useState("");
   const [attachment, setAttachment] = useState<MessageAttachment | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [upgradeNudge, setUpgradeNudge] = useState<MessageAttachment["type"] | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const documentInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,6 +40,16 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
     submit();
   }
 
+  function handleAttachClick(type: MessageAttachment["type"], allowed: boolean, inputRef: React.RefObject<HTMLInputElement | null>) {
+    setError(null);
+    if (!allowed) {
+      setUpgradeNudge(type);
+      return;
+    }
+    setUpgradeNudge(null);
+    inputRef.current?.click();
+  }
+
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>, type: MessageAttachment["type"]) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -51,6 +64,19 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
   return (
     <form onSubmit={handleSubmit} className="border-t border-border p-3">
       {error && <p className="mb-2 text-xs text-destructive">{error}</p>}
+      {upgradeNudge && (
+        <div className="mb-2 flex items-center justify-between gap-2 rounded-lg bg-[#e7f1a8]/40 px-2.5 py-1.5 text-xs text-[#071938]">
+          <span>Upgrade your plan to share {upgradeNudge === "image" ? "images" : "documents"}.</span>
+          <div className="flex items-center gap-2">
+            <Link href={PLAN_PATH} className="font-medium underline underline-offset-2">
+              View plans
+            </Link>
+            <button type="button" onClick={() => setUpgradeNudge(null)} aria-label="Dismiss">
+              <X className="size-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
       {attachment && (
         <div className="mb-2 flex items-center gap-2">
           {attachment.type === "image" ? (
@@ -80,9 +106,8 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
           type="button"
           variant="ghost"
           size="icon"
-          disabled={!canShareImages}
           title={canShareImages ? "Attach an image" : "Upgrade to share images"}
-          onClick={() => imageInputRef.current?.click()}
+          onClick={() => handleAttachClick("image", canShareImages, imageInputRef)}
         >
           <ImageIcon className="size-4" />
         </Button>
@@ -90,9 +115,8 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
           type="button"
           variant="ghost"
           size="icon"
-          disabled={!canShareDocuments}
           title={canShareDocuments ? "Attach a document" : "Upgrade to share documents"}
-          onClick={() => documentInputRef.current?.click()}
+          onClick={() => handleAttachClick("document", canShareDocuments, documentInputRef)}
         >
           <FileText className="size-4" />
         </Button>
