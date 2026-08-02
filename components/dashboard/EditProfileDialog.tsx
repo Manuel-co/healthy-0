@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { updatePatientProfile } from "@/lib/patients-data";
@@ -77,7 +78,12 @@ export function EditProfileDialog({ patient, trigger, onSaved }: EditProfileDial
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="edit-dob">Date of birth</Label>
-            <Input id="edit-dob" type="date" value={dob} onChange={(e) => setDob(e.target.value)} />
+            <DatePicker
+              id="edit-dob"
+              value={dob}
+              onChange={setDob}
+              disabled={(date) => date > new Date()}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="edit-concern">Reason for care</Label>

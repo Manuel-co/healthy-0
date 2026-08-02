@@ -80,6 +80,10 @@ function NotificationBell({ userId }: { userId: string }) {
 export function DashboardTopbar({ role }: { role: Role }) {
   const { currentUser, logOut } = useAuth();
   const router = useRouter();
+  // Selecting a page from the mobile sidebar navigates but doesn't close the
+  // sheet on its own (Link isn't a Sheet "close" trigger), so it's closed
+  // explicitly on click below.
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   function handleLogOut() {
     logOut();
@@ -91,7 +95,7 @@ export function DashboardTopbar({ role }: { role: Role }) {
   return (
     <header className="flex items-center justify-between border-b border-border bg-[#fffef8] px-4 py-3 md:px-6">
       <div className="flex items-center gap-2">
-        <Sheet>
+        <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden">
               <Menu className="size-5" />
@@ -106,6 +110,7 @@ export function DashboardTopbar({ role }: { role: Role }) {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={() => setMobileNavOpen(false)}
                   className="rounded-lg px-3 py-2 text-sm font-medium text-[#071938]/80 hover:bg-[#071938]/5"
                 >
                   {item.label}

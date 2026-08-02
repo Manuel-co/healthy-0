@@ -1,6 +1,8 @@
 "use client";
 
 import { useInView } from "../lib/useInView";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { initials } from "@/lib/utils";
 
 const testimonials = [
   {
@@ -97,7 +99,10 @@ export default function Testimonials() {
                 &ldquo;{t.quote}&rdquo;
               </p>
               <div className="flex items-center gap-3 pt-4 border-t border-black/8">
-                <img src={t.avatar} alt={t.name} className="w-9 h-9 rounded-full object-cover" />
+                <Avatar className="size-9">
+                  <AvatarImage src={t.avatar} alt={t.name} />
+                  <AvatarFallback>{initials(t.name)}</AvatarFallback>
+                </Avatar>
                 <div>
                   <p className="text-[12px] font-medium text-[#071938]">{t.name}</p>
                   <p className="text-[11px] text-[#071938]/40">{t.role}</p>

@@ -195,7 +195,7 @@ export default function DoctorSignupPage() {
               value={formik.values.focusAreas}
               onChange={(focusAreas) => {
                 formik.setFieldValue("focusAreas", focusAreas);
-                formik.setFieldTouched("focusAreas", true);
+                formik.setFieldTouched("focusAreas", true, false);
               }}
             />
             {formik.touched.focusAreas && formik.errors.focusAreas && (
@@ -276,9 +276,9 @@ export default function DoctorSignupPage() {
             value={formik.values.kyc}
             onChange={(kyc) => {
               formik.setFieldValue("kyc", kyc);
-              formik.setFieldTouched("kyc.idType", true);
-              formik.setFieldTouched("kyc.idNumber", true);
-              formik.setFieldTouched("kyc.documentName", true);
+              formik.setFieldTouched("kyc.idType", true, false);
+              formik.setFieldTouched("kyc.idNumber", true, false);
+              formik.setFieldTouched("kyc.documentName", true, false);
             }}
             errors={formik.touched.kyc ? (formik.errors.kyc as Record<string, string> | undefined) : undefined}
           />

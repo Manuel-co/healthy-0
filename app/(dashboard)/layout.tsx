@@ -20,9 +20,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex min-h-screen bg-[#fffef8]">
       <Sidebar role={currentUser.role} />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <DashboardTopbar role={currentUser.role} />
-        <main className="flex-1 px-4 py-6 md:px-8">
+        <main className="min-w-0 flex-1 px-4 py-6 md:px-8">
           {currentUser.role !== "admin" && (
             <VerificationBanner status={currentUser.verificationStatus} rejectionReason={currentUser.rejectionReason} />
           )}

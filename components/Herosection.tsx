@@ -170,7 +170,7 @@ export default function HeroSection() {
             menuOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          {["Home", "About Us", "Pricing"].map((item, i) => (
+          {["Home", "About Us", "Services"].map((item, i) => (
             <a 
               key={item}
               href="#" 

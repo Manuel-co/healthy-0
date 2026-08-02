@@ -4,6 +4,7 @@ import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
 import { SendHorizonal, Image as ImageIcon, FileText, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { fileToDataUrl } from "@/lib/utils";
 import { PLAN_PATH } from "@/lib/routes";
@@ -94,14 +95,14 @@ export function MessageInput({ onSend, canShareImages, canShareDocuments }: Mess
         </div>
       )}
       <div className="flex items-end gap-2">
-        <input
+        <Input
           ref={imageInputRef}
           type="file"
           accept="image/*"
           className="hidden"
           onChange={(e) => handleFileChange(e, "image")}
         />
-        <input ref={documentInputRef} type="file" className="hidden" onChange={(e) => handleFileChange(e, "document")} />
+        <Input ref={documentInputRef} type="file" className="hidden" onChange={(e) => handleFileChange(e, "document")} />
         <Button
           type="button"
           variant="ghost"

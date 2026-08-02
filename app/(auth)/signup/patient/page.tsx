@@ -10,10 +10,9 @@ import { dashboardPathFor } from "@/lib/routes";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Button } from "@/components/ui/button";
-
-const TODAY = new Date().toISOString().slice(0, 10);
 
 const PatientSignupSchema = Yup.object({
   name: Yup.string().trim().required("Full name is required."),
@@ -84,15 +83,15 @@ export default function PatientSignupPage() {
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="dob">Date of birth</Label>
-            <Input
+            <DatePicker
               id="dob"
-              name="dob"
-              type="date"
-              max={TODAY}
               value={formik.values.dob}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              aria-invalid={!!(formik.touched.dob && formik.errors.dob)}
+              onChange={(value) => {
+                formik.setFieldValue("dob", value);
+                formik.setFieldTouched("dob", true, false);
+              }}
+              disabled={(date) => date > new Date()}
+              defaultMonth={new Date(new Date().getFullYear() - 25, 0)}
             />
             {formik.touched.dob && formik.errors.dob && (
               <p className="text-sm text-destructive">{formik.errors.dob}</p>

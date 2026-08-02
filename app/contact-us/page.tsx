@@ -3,9 +3,11 @@
 import { useState, type FormEvent } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 const inputClasses =
-  "w-full rounded-xl border border-[#071938]/15 bg-[#fffef8] px-4 py-3 text-[13px] text-[#071938] placeholder:text-[#071938]/35 focus:outline-none focus:border-[#071938]/40 transition-colors";
+  "h-auto w-full rounded-xl border-[#071938]/15 bg-[#fffef8] px-4 py-3 text-[13px] text-[#071938] placeholder:text-[#071938]/35 focus-visible:border-[#071938]/40 focus-visible:ring-0 transition-colors";
 
 export default function ContactUsPage() {
   const [name, setName] = useState("");
@@ -37,7 +39,7 @@ export default function ContactUsPage() {
                 </h1>
 
                 <p className="text-[12.5px] text-[#071938]/45 mb-10">
-                  Questions, feedback, or need help with your account? We'd love to hear from you.
+                  Questions, feedback, or need help with your account? We&apos;d love to hear from you.
                 </p>
 
                 {submitted ? (
@@ -77,7 +79,7 @@ export default function ContactUsPage() {
                         >
                           Name
                         </label>
-                        <input
+                        <Input
                           id="name"
                           type="text"
                           required
@@ -95,7 +97,7 @@ export default function ContactUsPage() {
                         >
                           Email
                         </label>
-                        <input
+                        <Input
                           id="email"
                           type="email"
                           required
@@ -114,7 +116,7 @@ export default function ContactUsPage() {
                       >
                         Subject
                       </label>
-                      <input
+                      <Input
                         id="subject"
                         type="text"
                         required
@@ -132,14 +134,14 @@ export default function ContactUsPage() {
                       >
                         Message
                       </label>
-                      <textarea
+                      <Textarea
                         id="message"
                         required
                         rows={5}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Tell us a bit more..."
-                        className={`${inputClasses} resize-none`}
+                        className={`${inputClasses} min-h-0 resize-none`}
                       />
                     </div>
 
@@ -158,7 +160,7 @@ export default function ContactUsPage() {
                   </h3>
 
                   <p className="text-[13px] leading-[1.8] text-[#071938]/65 mb-5">
-                    Reach our support team directly and we'll respond within
+                    Reach our support team directly and we&apos;ll respond within
                     24 hours.
                   </p>
 
