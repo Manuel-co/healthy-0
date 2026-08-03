@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Menu, LogOut, Bell } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+import { Menu, LogOut, Bell, LayoutGrid, ChevronRight, PanelLeft } from "lucide-react";
 import { useAuth } from "@/lib/auth/auth-context";
 import { NAV_ITEMS } from "@/components/dashboard/Sidebar";
 import type { Role, Notification } from "@/lib/types";
@@ -77,9 +77,16 @@ function NotificationBell({ userId }: { userId: string }) {
   );
 }
 
-export function DashboardTopbar({ role }: { role: Role }) {
+interface DashboardTopbarProps {
+  role: Role;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+}
+
+export function DashboardTopbar({ role, collapsed, onToggleCollapsed }: DashboardTopbarProps) {
   const { currentUser, logOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   // Selecting a page from the mobile sidebar navigates but doesn't close the
   // sheet on its own (Link isn't a Sheet "close" trigger), so it's closed
   // explicitly on click below.
@@ -92,9 +99,25 @@ export function DashboardTopbar({ role }: { role: Role }) {
 
   if (!currentUser) return null;
 
+  // Longest-href-first so nested routes (e.g. /dashboard/patient/doctors) don't
+  // match the dashboard root (/dashboard/patient) instead of their own item.
+  const activeNavItem = [...NAV_ITEMS[role]]
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+  const breadcrumbLabel = activeNavItem?.label ?? NAV_ITEMS[role][0]?.label;
+
   return (
     <header className="flex items-center justify-between border-b border-border bg-[#fffef8] px-4 py-3 md:px-6">
       <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="hidden md:inline-flex"
+          onClick={onToggleCollapsed}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <PanelLeft className="size-4.5" />
+        </Button>
         <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
           <SheetTrigger asChild>
             <Button variant="ghost" size="icon" className="md:hidden">
@@ -122,6 +145,12 @@ export function DashboardTopbar({ role }: { role: Role }) {
         <Link href="/" className="font-heading font-extrabold text-[#071938]">
           HealthyZero
         </Link>
+        <div className="hidden items-center gap-1.5 text-sm text-[#071938]/50 md:flex">
+          <span className="mx-1 h-4 w-px bg-border" />
+          <LayoutGrid className="size-3.5" />
+          <ChevronRight className="size-3.5" />
+          <span className="font-medium text-[#071938]">{breadcrumbLabel}</span>
+        </div>
       </div>
 
       <div className="flex items-center gap-1">
@@ -136,7 +165,10 @@ export function DashboardTopbar({ role }: { role: Role }) {
                 )}
                 <AvatarFallback>{initials(currentUser.name)}</AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm font-medium text-[#071938] sm:inline">{currentUser.name}</span>
+              <span className="hidden flex-col items-start leading-tight sm:flex">
+                <span className="text-sm font-medium text-[#071938]">{currentUser.name}</span>
+                <span className="text-[10px] capitalize text-muted-foreground">{currentUser.role}</span>
+              </span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">

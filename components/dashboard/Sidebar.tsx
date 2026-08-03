@@ -30,12 +30,22 @@ const NAV_ITEMS: Record<Role, NavItem[]> = {
   ],
 };
 
-export function Sidebar({ role }: { role: Role }) {
+interface SidebarProps {
+  role: Role;
+  collapsed: boolean;
+}
+
+export function Sidebar({ role, collapsed }: SidebarProps) {
   const pathname = usePathname();
   const items = NAV_ITEMS[role];
 
   return (
-    <aside className="hidden md:flex w-56 shrink-0 flex-col border-r border-border bg-[#fffef8] px-3 py-6">
+    <aside
+      className={cn(
+        "hidden md:flex shrink-0 flex-col border-r border-border bg-[#fffef8] py-6 transition-[width] duration-200",
+        collapsed ? "w-[68px] px-2" : "w-56 px-3"
+      )}
+    >
       <nav className="flex flex-col gap-1">
         {items.map((item) => {
           const active = pathname === item.href;
@@ -44,15 +54,17 @@ export function Sidebar({ role }: { role: Role }) {
             <Link
               key={item.href}
               href={item.href}
+              title={collapsed ? item.label : undefined}
               className={cn(
                 "flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                collapsed && "justify-center px-0",
                 active
                   ? "bg-[#071938] text-[#fffef8]"
                   : "text-[#071938]/70 hover:bg-[#071938]/5 hover:text-[#071938]"
               )}
             >
-              <Icon className="size-4" />
-              {item.label}
+              <Icon className="size-4 shrink-0" />
+              {!collapsed && item.label}
             </Link>
           );
         })}
