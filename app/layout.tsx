@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import CookieConsent from "@/components/CookieConsent";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -17,8 +18,37 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HealthyZero",
-  description: "HealthyZero makes access to healthcare easy and affordable — connecting you with licensed doctors from the comfort of home. Zero boundaries, zero limitations, zero stigmatization.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "online therapy",
+    "telehealth",
+    "mental health",
+    "licensed doctors",
+    "online counselling",
+    "HealthyZero",
+  ],
+  openGraph: {
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({

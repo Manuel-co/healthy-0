@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "Sign up",
+  description: "Create a HealthyZero account as a patient or a doctor.",
+};
 
 export default function SignupChooserPage() {
   return (
