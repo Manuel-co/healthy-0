@@ -9,9 +9,10 @@ import { NAV_ITEMS } from "@/components/dashboard/Sidebar";
 import type { Role, Notification } from "@/lib/types";
 import { getNotificationsForUser, getUnreadCount, markNotificationRead } from "@/lib/notifications-data";
 import { usePolling } from "@/hooks/usePolling";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback, AvatarBadge } from "@/components/ui/avatar";
+import { GeneratedAvatarFallback } from "@/components/ui/generated-avatar";
 import { Button } from "@/components/ui/button";
-import { initials, formatRelativeTimestamp } from "@/lib/utils";
+import { formatRelativeTimestamp } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -163,7 +164,10 @@ export function DashboardTopbar({ role, collapsed, onToggleCollapsed }: Dashboar
                 {currentUser.role === "doctor" && currentUser.profileImageUrl && (
                   <AvatarImage src={currentUser.profileImageUrl} alt={currentUser.name} />
                 )}
-                <AvatarFallback>{initials(currentUser.name)}</AvatarFallback>
+                <AvatarFallback>
+                  <GeneratedAvatarFallback seed={currentUser.id} size="sm" />
+                </AvatarFallback>
+                <AvatarBadge className="bg-green-600" aria-label="Online" />
               </Avatar>
               <span className="hidden flex-col items-start leading-tight sm:flex">
                 <span className="text-sm font-medium text-[#071938]">{currentUser.name}</span>

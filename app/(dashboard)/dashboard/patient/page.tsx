@@ -15,13 +15,14 @@ import {
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { GeneratedAvatarFallback } from "@/components/ui/generated-avatar";
 import { DoctorAvatar } from "@/components/dashboard/DoctorAvatar";
 import { BookSessionDialog } from "@/components/dashboard/BookSessionDialog";
 import { EditProfileDialog } from "@/components/dashboard/EditProfileDialog";
 import { OutOfSessionsNotice } from "@/components/dashboard/OutOfSessionsNotice";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getEntitlements, sessionsRemaining } from "@/lib/plans";
-import { calculateAge, initials } from "@/lib/utils";
+import { calculateAge } from "@/lib/utils";
 import type { Doctor, Patient, Session } from "@/lib/types";
 
 function DashboardSkeleton() {
@@ -288,7 +289,9 @@ export default function PatientDashboardPage() {
           <CardContent className="space-y-5 pt-6">
             <div className="flex flex-col items-center text-center">
               <Avatar className="size-16">
-                <AvatarFallback className="text-lg">{initials(patient.name)}</AvatarFallback>
+                <AvatarFallback className="text-lg">
+                  <GeneratedAvatarFallback seed={patient.id} size="lg" />
+                </AvatarFallback>
               </Avatar>
               <p className="mt-3 font-heading font-bold text-[#071938]">{patient.name}</p>
               <p className="text-xs text-muted-foreground">{calculateAge(patient.dob)} years</p>

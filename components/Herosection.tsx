@@ -6,6 +6,12 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth/auth-context";
 import { dashboardPathFor } from "@/lib/routes";
 
+const NAV_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/#about" },
+  { label: "Services", href: "/services" },
+];
+
 export default function HeroSection() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -119,21 +125,21 @@ export default function HeroSection() {
                 transitionDelay: "500ms",
               }}
             >
-              {["Home", "About Us", "Services"].map((item, i) => (
-                <a 
-                  key={item}
-                  href="#" 
+              {NAV_LINKS.map((item, i) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
                   className={`relative text-[13px] px-3 py-1.5 rounded-full transition-all duration-300 overflow-hidden group ${
-                    i === 0 
-                      ? "font-medium text-[#071938] bg-white/80" 
+                    i === 0
+                      ? "font-medium text-[#071938] bg-white/80"
                       : "text-[#071938]/55 hover:text-[#071938]"
                   }`}
                 >
-                  <span className="relative z-10">{item}</span>
+                  <span className="relative z-10">{item.label}</span>
                   {i !== 0 && (
                     <span className="absolute inset-0 bg-white/60 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 origin-center" />
                   )}
-                </a>
+                </Link>
               ))}
             </nav>
 
@@ -170,10 +176,11 @@ export default function HeroSection() {
             menuOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          {["Home", "About Us", "Services"].map((item, i) => (
-            <a 
-              key={item}
-              href="#" 
+          {NAV_LINKS.map((item, i) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={() => setMenuOpen(false)}
               className={`text-[15px] py-2 transition-all duration-300 ${
                 i === 0 ? "font-medium text-[#071938]" : "text-[#071938]/60"
               }`}
@@ -183,11 +190,12 @@ export default function HeroSection() {
                 transitionDelay: `${i * 75}ms`,
               }}
             >
-              {item}
-            </a>
+              {item.label}
+            </Link>
           ))}
           <Link
             href={currentUser ? dashboardPathFor(currentUser.role) : "/login"}
+            onClick={() => setMenuOpen(false)}
             className="text-[15px] py-2 font-medium text-[#071938] transition-all duration-300"
             style={{
               transform: menuOpen ? "translateX(0)" : "translateX(-20px)",
